@@ -261,6 +261,10 @@ html[lang="ar"] .rail .ph{direction:rtl;font-family:var(--f-ar)}
 .tray{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:46px}
 .tile{font-family:var(--f-de);font-size:1.08rem;padding:9px 13px;border-radius:var(--r);border:1px solid var(--line);border-bottom-width:2px;background:var(--surface);line-height:1}
 .tile.used{visibility:hidden}
+.tile.mk-ok{border-color:var(--ok,#2e7d4f);box-shadow:inset 0 -3px 0 var(--ok,#2e7d4f)}
+.tile.mk-bad{border-color:var(--bad,#c0392b);box-shadow:inset 0 -3px 0 var(--bad,#c0392b)}
+.recb{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 7px;border-radius:99px;border:1px solid var(--line);color:var(--muted);vertical-align:middle;margin-inline-start:4px}
+.fb ul.dg{margin:0;padding-inline-start:1.2em;display:flex;flex-direction:column;gap:4px}
 .tile.p{min-width:34px;font-weight:700}
 .trio{display:grid;grid-template-columns:1fr 1fr 2fr;gap:8px}
 .fb{border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:6px;line-height:1.55}
@@ -444,6 +448,140 @@ window.UI = {
   reset:"Reset all progress", resetQ:"Really delete all your progress?", yes:"Yes, reset", no:"No", noSpeech:"Your device doesn't support speech"
  }
 };
+
+// Smart feedback for sentence building: names the real mistake.
+Object.assign(window.UI.ar,{
+ in_listen2:"اسمع 4 حوارات (كل حوار مرتين على الأكتر) واختار الجواب الصح.",
+ ex_form:"الشكل",
+ ex_reg_du:"غير رسمي (**du**): ابدأ بـ **Liebe … / Lieber …,** واستعمل **du / dir / dein**، واختم بـ **Viele Grüße** واسمك.",
+ ex_reg_sie:"رسمي (**Sie**): ابدأ بـ **Sehr geehrte Frau … / Sehr geehrter Herr …** واستعمل **Sie / Ihnen / Ihr**، واختم بـ **Freundliche Grüße** واسمك الكامل.",
+ ex_desc:"امتحانات تجريبية: اختبارات قصيرة (60 دقيقة) وامتحانات بمستوى B1 الحقيقي (100 دقيقة): قراءة، قواعد، استماع وكتابة.",
+ rec_badge:"للفهم فقط",
+ rec_pret:"بـ B1 لازم **تفهم** الـ Präteritum لما تقراه أو تسمعه (بالقصص والجرايد والأخبار)، بس مش لازم تستعملو. بالحكي والكتابة استعمل **Perfekt**. ما عدا: **war، hatte** والأفعال المساعدة **konnte، musste، wollte، durfte**، هدول استعملهن عادي.",
+ rec_pass:"بـ B1 لازم **تعرف** الـ Passiv لما تشوفو بالرسائل الرسمية والإعلانات والتعليمات ، مثلاً: **Das Formular muss ausgefüllt werden**، بس مش لازم تكتبو أو تحكي فيه.",
+ dg_swapall:"انتبه للمعنى: القسمين تبع الجملة متبادلين (السبب والنتيجة).",
+ dg_form:"**{x}** مش الكلمة الصح هون ← الصح: **{y}**",
+ dg_wrong:"الكلمة **{x}** ما بتناسب هالجملة.",
+ dg_yesno:"هاد سؤال جوابه نعم/لا: الفعل المصرَّف بييجي **أول** الجملة.",
+ dg_w:"سؤال بأداة استفهام: أداة السؤال أول، وبعدها الفعل مباشرة.",
+ dg_swap:"انتبه للمعنى: هالكلمات بالقسم الغلط من الجملة: **{w}**",
+ dg_sub:"بالجملة اللي بتبلّش بـ **{c}** الفعل المصرَّف بيروح **لآخر** الجملة.",
+ dg_adv:"بعد **{c}** بييجي الفعل **مباشرة** (بالخانة التانية).",
+ dg_denn:"بعد **denn** الترتيب عادي متل الجملة الرئيسية: الفاعل وبعدو الفعل.",
+ dg_main:"بعد الجملة الفرعية، الجملة التانية بتبلّش **بالفعل**.",
+ dg_end:"**{w}** بيروح **لآخر** الجملة.",
+ dg_missing:"في كلمات ناقصة ({n}).",
+ dg_extra:"مش لازم تستعمل كل الكلمات، في كلمة زيادة.",
+ dg_order:"الكلمات صح بس الترتيب لسا مش مضبوط. الكلمات **الخضرا** بمحلّها الصح.",
+ dg_title:"شو الغلط؟",
+ cn_weil_denn:"**weil** و **denn** معناهن «لأنو». بعد weil الفعل بيروح للآخر، وبعد denn الفعل بيضل بالخانة التانية.",
+ cn_obwohl_trotzdem:"**obwohl** + الفعل بالآخر. **trotzdem** + الفعل مباشرة بعدها.",
+ cn_deshalb_weil:"**weil** بتجيب السبب (الفعل بالآخر). **deshalb** بتجيب النتيجة (الفعل مباشرة بعدها).",
+ cn_denn_deshalb:"**denn** بتجيب السبب، **deshalb** بتجيب النتيجة.",
+ cn_als_wenn:"**als** لمرة وحدة بالماضي. **wenn** للتكرار أو للحاضر والمستقبل.",
+ cn_dass_ob:"**ob** = «إذا» (سؤال نعم/لا). **dass** = «إنو» (معلومة أو رأي).",
+ cn_dass_sodass:"**so** + صفة … **, dass** … / وبدون so: **, sodass** …",
+ cn_damit_um:"**um … zu** + مصدر لما الفاعل نفسه. **damit** + الفعل بالآخر لما الفاعل مختلف."
+});
+Object.assign(window.UI.uk,{
+ in_listen2:"Прослухайте 4 розмови (кожну щонайбільше двічі) і виберіть правильну відповідь.",
+ ex_form:"Форма",
+ ex_reg_du:"Неофіційно (**du**): почніть з **Liebe … / Lieber …,**, вживайте **du / dir / dein**, закінчіть **Viele Grüße** та ім’ям.",
+ ex_reg_sie:"Офіційно (**Sie**): почніть з **Sehr geehrte Frau … / Sehr geehrter Herr …**, вживайте **Sie / Ihnen / Ihr**, закінчіть **Freundliche Grüße** та повним ім’ям.",
+ ex_desc:"Пробні іспити: короткі тести (60 хв) і тести справжнього рівня B1 (100 хв): читання, граматика, аудіювання й письмо.",
+ rec_badge:"Лише розуміти",
+ rec_pret:"На рівні B1 треба **розуміти** Präteritum у текстах і новинах, але не обов’язково вживати. У мовленні й на письмі використовуй **Perfekt**. Винятки: **war, hatte** і модальні **konnte, musste, wollte, durfte** — їх вживай активно.",
+ rec_pass:"На рівні B1 треба **впізнавати** Passiv в офіційних листах, оголошеннях та інструкціях (напр.: „Das Formular muss ausgefüllt werden“), але не обов’язково ним користуватися.",
+ dg_swapall:"Перевір зміст: дві частини речення переплутані (причина і наслідок).",
+ dg_form:"**{x}** тут не підходить → правильно: **{y}**",
+ dg_wrong:"Слово **{x}** не підходить у це речення.",
+ dg_yesno:"Це питання «так/ні»: відмінюване дієслово стоїть **на першому місці**.",
+ dg_w:"Питання з питальним словом: спочатку питальне слово, потім одразу дієслово.",
+ dg_swap:"Перевір зміст: ці слова стоять не в тій частині речення: **{w}**",
+ dg_sub:"У частині з **{c}** відмінюване дієслово стоїть **в кінці**.",
+ dg_adv:"Після **{c}** дієслово стоїть **одразу** (на другому місці).",
+ dg_denn:"Після **denn** звичайний порядок, як у головному реченні: підмет, потім дієслово.",
+ dg_main:"Після підрядного речення головне починається **з дієслова**.",
+ dg_end:"**{w}** стоїть **в кінці** речення.",
+ dg_missing:"Бракує слів ({n}).",
+ dg_extra:"Не всі слова потрібні: одне слово зайве.",
+ dg_order:"Слова правильні, але порядок ще ні. **Зелені** слова вже на своєму місці.",
+ dg_title:"У чому помилка?",
+ cn_weil_denn:"**weil** і **denn** означають «бо». Після weil дієслово в кінці, після denn — на другому місці.",
+ cn_obwohl_trotzdem:"**obwohl** + дієслово в кінці. **trotzdem** + дієслово одразу після нього.",
+ cn_deshalb_weil:"**weil** вводить причину (дієслово в кінці). **deshalb** — наслідок (дієслово одразу після нього).",
+ cn_denn_deshalb:"**denn** вводить причину, **deshalb** — наслідок.",
+ cn_als_wenn:"**als** — один раз у минулому. **wenn** — повторювано або в теперішньому/майбутньому.",
+ cn_dass_ob:"**ob** = «чи» (питання так/ні). **dass** = «що» (факт або думка).",
+ cn_dass_sodass:"**so** + прикметник … **, dass** … / без so: **, sodass** …",
+ cn_damit_um:"**um … zu** + інфінітив, коли підмет той самий. **damit** + дієслово в кінці, коли підмет інший."
+});
+Object.assign(window.UI.tr,{
+ in_listen2:"4 konuşma dinleyin (her biri en fazla iki kez) ve doğru cevabı seçin.",
+ ex_form:"Biçim",
+ ex_reg_du:"Samimi (**du**): **Liebe … / Lieber …,** ile başlayın, **du / dir / dein** kullanın, **Viele Grüße** ve adınızla bitirin.",
+ ex_reg_sie:"Resmi (**Sie**): **Sehr geehrte Frau … / Sehr geehrter Herr …** ile başlayın, **Sie / Ihnen / Ihr** kullanın, **Freundliche Grüße** ve tam adınızla bitirin.",
+ ex_desc:"Deneme sınavları: kısa testler (60 dk) ve gerçek B1 seviyesinde sınavlar (100 dk): okuma, dilbilgisi, dinleme ve yazma.",
+ rec_badge:"Sadece anlamak",
+ rec_pret:"B1'de Präteritum'u metinlerde ve haberlerde **anlaman** gerekir, ama kullanman gerekmez. Konuşurken ve yazarken **Perfekt** kullan. İstisnalar: **war, hatte** ve **konnte, musste, wollte, durfte** — bunları aktif kullan.",
+ rec_pass:"B1'de Passiv'i resmi mektuplarda, duyurularda ve talimatlarda **tanıman** gerekir (örn.: „Das Formular muss ausgefüllt werden“), ama kendin kullanman gerekmez.",
+ dg_swapall:"Anlama dikkat: cümlenin iki kısmı yer değiştirmiş (sebep ve sonuç).",
+ dg_form:"**{x}** burada doğru değil → doğrusu: **{y}**",
+ dg_wrong:"**{x}** kelimesi bu cümleye uymuyor.",
+ dg_yesno:"Bu evet/hayır sorusu: çekimli fiil cümlenin **başına** gelir.",
+ dg_w:"Soru kelimeli soru: önce soru kelimesi, hemen ardından fiil.",
+ dg_swap:"Anlama dikkat: bu kelimeler cümlenin yanlış kısmında: **{w}**",
+ dg_sub:"**{c}** ile başlayan kısımda çekimli fiil **sona** gider.",
+ dg_adv:"**{c}** kelimesinden sonra fiil **hemen** gelir (2. pozisyon).",
+ dg_denn:"**denn**'den sonra normal sıra, ana cümle gibi: özne, sonra fiil.",
+ dg_main:"Yan cümleden sonra ana cümle **fiille** başlar.",
+ dg_end:"**{w}** cümlenin **sonuna** gider.",
+ dg_missing:"Eksik kelime var ({n}).",
+ dg_extra:"Her kelime gerekli değil: bir kelime fazla.",
+ dg_order:"Kelimeler doğru ama sıra henüz değil. **Yeşil** kelimeler doğru yerde.",
+ dg_title:"Hata ne?",
+ cn_weil_denn:"**weil** ve **denn** ikisi de «çünkü» demek. weil'den sonra fiil sona, denn'den sonra 2. pozisyonda kalır.",
+ cn_obwohl_trotzdem:"**obwohl** + fiil sonda. **trotzdem** + fiil hemen ardından.",
+ cn_deshalb_weil:"**weil** sebebi verir (fiil sonda). **deshalb** sonucu verir (fiil hemen ardından).",
+ cn_denn_deshalb:"**denn** sebebi, **deshalb** sonucu verir.",
+ cn_als_wenn:"**als** geçmişte tek bir sefer için. **wenn** tekrar eden olaylar veya şimdiki/gelecek zaman için.",
+ cn_dass_ob:"**ob** = «-ip -mediği» (evet/hayır sorusu). **dass** = «-dığı» (bilgi veya görüş).",
+ cn_dass_sodass:"**so** + sıfat … **, dass** … / so olmadan: **, sodass** …",
+ cn_damit_um:"Özne aynıysa **um … zu** + mastar. Özne farklıysa **damit** + fiil sonda."
+});
+Object.assign(window.UI.en,{
+ in_listen2:"Listen to 4 conversations (each at most twice) and choose the right answer.",
+ ex_form:"Form",
+ ex_reg_du:"Informal (**du**): start with **Liebe … / Lieber …,**, use **du / dir / dein**, end with **Viele Grüße** and your name.",
+ ex_reg_sie:"Formal (**Sie**): start with **Sehr geehrte Frau … / Sehr geehrter Herr …**, use **Sie / Ihnen / Ihr**, end with **Freundliche Grüße** and your full name.",
+ ex_desc:"Mock exams: short tests (60 min) and tests at real B1 level (100 min): reading, grammar, listening and writing.",
+ rec_badge:"Understand only",
+ rec_pret:"At B1 you need to **understand** the Präteritum in texts and news, but you don't have to use it. When speaking and writing, use the **Perfekt**. Exceptions: **war, hatte** and the modals **konnte, musste, wollte, durfte** — use these actively.",
+ rec_pass:"At B1 you need to **recognise** the Passiv in official letters, notices and instructions (e.g. „Das Formular muss ausgefüllt werden“), but you don't have to produce it yourself.",
+ dg_swapall:"Check the meaning: the two parts of the sentence are swapped (reason and result).",
+ dg_form:"**{x}** is not right here → correct: **{y}**",
+ dg_wrong:"The word **{x}** doesn't fit in this sentence.",
+ dg_yesno:"This is a yes/no question: the conjugated verb comes **first**.",
+ dg_w:"W-question: the question word comes first, then the verb right after it.",
+ dg_swap:"Check the meaning: these words are in the wrong part of the sentence: **{w}**",
+ dg_sub:"In the part with **{c}**, the conjugated verb goes to the **end**.",
+ dg_adv:"After **{c}** the verb comes **right next** (position 2).",
+ dg_denn:"After **denn** use normal main-clause order: subject, then verb.",
+ dg_main:"After a subordinate clause, the main clause starts **with the verb**.",
+ dg_end:"**{w}** goes to the **end** of the sentence.",
+ dg_missing:"Some words are missing ({n}).",
+ dg_extra:"You don't need every tile: one word is extra.",
+ dg_order:"The words are right, but the order isn't yet. **Green** words are already in the right place.",
+ dg_title:"What's wrong?",
+ cn_weil_denn:"**weil** and **denn** both mean “because”. After weil the verb goes to the end; after denn it stays in position 2.",
+ cn_obwohl_trotzdem:"**obwohl** + verb at the end. **trotzdem** + verb right after it.",
+ cn_deshalb_weil:"**weil** gives the reason (verb at the end). **deshalb** gives the result (verb right after it).",
+ cn_denn_deshalb:"**denn** gives the reason, **deshalb** gives the result.",
+ cn_als_wenn:"**als** = one time in the past. **wenn** = repeated, or present/future.",
+ cn_dass_ob:"**ob** = “whether” (a yes/no question). **dass** = “that” (a fact or opinion).",
+ cn_dass_sodass:"**so** + adjective … **, dass** … / without so: **, sodass** …",
+ cn_damit_um:"**um … zu** + infinitive when the subject is the same. **damit** + verb at the end when the subject is different."
+});
 
 </script>
 <script>
@@ -1089,8 +1227,8 @@ window.SATZBAU = [
 ["modal","wer will mitkommen","?",[],["wollen"],{ar:"مين بدّه يجي معنا؟",uk:"Хто хоче піти з нами?",tr:"Kim bizimle gelmek ister?",en:"Who wants to come along?"}],
 ["modal","Sie sollen das Formular unterschreiben",".",[],["sollst"],{ar:"المفروض توقّع الاستمارة.",uk:"Ви маєте підписати формуляр.",tr:"Formu imzalamanız gerekiyor.",en:"You're supposed to sign the form."}],
 // Nebensätze
-["nebensatz","ich bleibe zu Hause , weil ich krank bin",".",["weil ich krank bin , bleibe ich zu Hause"],["denn"],{ar:"بضل بالبيت لأني مريض.",uk:"Я залишаюся вдома, бо я хворий.",tr:"Hasta olduğum için evde kalıyorum.",en:"I'm staying at home because I'm ill."}],
-["nebensatz","ich gehe spazieren , obwohl es regnet",".",["obwohl es regnet , gehe ich spazieren"],["trotzdem"],{ar:"بطلع اتمشّى مع إنها عم تشتي.",uk:"Я йду гуляти, хоча йде дощ.",tr:"Yağmur yağmasına rağmen yürüyüşe çıkıyorum.",en:"I'm going for a walk although it's raining."}],
+["nebensatz","ich bleibe zu Hause , weil ich krank bin",".",["weil ich krank bin , bleibe ich zu Hause","ich bleibe zu Hause , denn ich bin krank"],["denn"],{ar:"بضل بالبيت لأني مريض.",uk:"Я залишаюся вдома, бо я хворий.",tr:"Hasta olduğum için evde kalıyorum.",en:"I'm staying at home because I'm ill."}],
+["nebensatz","ich gehe spazieren , obwohl es regnet",".",["obwohl es regnet , gehe ich spazieren","es regnet , trotzdem gehe ich spazieren"],["trotzdem"],{ar:"بطلع اتمشّى مع إنها عم تشتي.",uk:"Я йду гуляти, хоча йде дощ.",tr:"Yağmur yağmasına rağmen yürüyüşe çıkıyorum.",en:"I'm going for a walk although it's raining."}],
 ["nebensatz","ich glaube , dass er heute kommt",".",[],["ob"],{ar:"بظن إنه رح يجي اليوم.",uk:"Я думаю, що він сьогодні прийде.",tr:"Bence bugün gelecek.",en:"I think he's coming today."}],
 ["nebensatz","ich möchte Ihnen mitteilen , dass ich einen Laptop gekauft habe",".",[],["Sie"],{ar:"بحب بلّغكم إني اشتريت لابتوب.",uk:"Хочу повідомити вам, що я купив ноутбук.",tr:"Size bir dizüstü bilgisayar aldığımı bildirmek istiyorum.",en:"I would like to inform you that I bought a laptop."}],
 ["nebensatz","der Vorteil ist , dass man online einkaufen kann",".",[],["sodass"],{ar:"الميزة إنه الواحد بيقدر يتسوّق أونلاين.",uk:"Перевага в тому, що можна купувати онлайн.",tr:"Avantajı, online alışveriş yapılabilmesi.",en:"The advantage is that you can shop online."}],
@@ -1100,17 +1238,17 @@ window.SATZBAU = [
 ["wennals","als ich ein Kind war , wohnte ich in einem kleinen Dorf",".",["ich wohnte in einem kleinen Dorf , als ich ein Kind war"],["wenn"],{ar:"لما كنت صغير، كنت ساكن بضيعة صغيرة.",uk:"Коли я був дитиною, я жив у маленькому селі.",tr:"Çocukken küçük bir köyde yaşıyordum.",en:"When I was a child, I lived in a small village."}],
 ["wennals","wenn ich Zeit habe , rufe ich dich an",".",["ich rufe dich an , wenn ich Zeit habe"],["als"],{ar:"لما يكون عندي وقت، بتّصل فيك.",uk:"Коли матиму час, я тобі зателефоную.",tr:"Vaktim olduğunda seni ararım.",en:"When I have time, I'll call you."}],
 ["wennals","als ich in die Schweiz gekommen bin , konnte ich kein Deutsch",".",["ich konnte kein Deutsch , als ich in die Schweiz gekommen bin"],["wenn"],{ar:"لما إجيت على سويسرا، ما كنت بعرف ألماني.",uk:"Коли я приїхав до Швейцарії, я не знав німецької.",tr:"İsviçre'ye geldiğimde hiç Almanca bilmiyordum.",en:"When I came to Switzerland, I didn't speak any German."}],
-["wennals","wenn es regnete , blieben wir zu Hause",".",["wir blieben zu Hause , wenn es regnete"],["als"],{ar:"لما كانت تشتي، كنا نضل بالبيت.",uk:"Коли йшов дощ, ми залишалися вдома.",tr:"Yağmur yağdığında evde kalırdık.",en:"Whenever it rained, we stayed at home."}],
+["wennals","wenn es regnete , blieben wir zu Hause",".",["wir blieben zu Hause , wenn es regnete","als es regnete , blieben wir zu Hause","wir blieben zu Hause , als es regnete"],["als"],{ar:"لما كانت تشتي، كنا نضل بالبيت.",uk:"Коли йшов дощ, ми залишалися вдома.",tr:"Yağmur yağdığında evde kalırdık.",en:"Whenever it rained, we stayed at home."}],
 ["wennals","wenn du willst , helfe ich dir",".",["ich helfe dir , wenn du willst"],["als"],{ar:"إذا بدّك، بساعدك.",uk:"Якщо хочеш, я тобі допоможу.",tr:"İstersen sana yardım ederim.",en:"If you want, I'll help you."}],
 ["wennals","als ich die Prüfung bestanden habe , war ich sehr glücklich",".",["ich war sehr glücklich , als ich die Prüfung bestanden habe"],["wenn"],{ar:"لما نجحت بالامتحان، كنت مبسوط كتير.",uk:"Коли я склав іспит, я був дуже щасливий.",tr:"Sınavı geçtiğimde çok mutluydum.",en:"When I passed the exam, I was very happy."}],
 // deshalb, trotzdem, denn
-["konnektoren","mein Handy ist alt , deshalb kaufe ich ein neues",".",["mein Handy ist alt , ich kaufe deshalb ein neues"],["weil"],{ar:"موبايلي قديم، لهيك رح اشتري واحد جديد.",uk:"Мій телефон старий, тому я куплю новий.",tr:"Telefonum eski, bu yüzden yenisini alacağım.",en:"My phone is old, so I'm going to buy a new one."}],
-["konnektoren","es regnet , trotzdem gehe ich spazieren",".",["es regnet , ich gehe trotzdem spazieren"],["obwohl"],{ar:"عم تشتي، رغم هيك بطلع اتمشّى.",uk:"Іде дощ, але я все одно йду гуляти.",tr:"Yağmur yağıyor, yine de yürüyüşe çıkıyorum.",en:"It's raining, but I'm going for a walk anyway."}],
+["konnektoren","mein Handy ist alt , deshalb kaufe ich ein neues",".",["mein Handy ist alt , ich kaufe deshalb ein neues","weil mein Handy alt ist , kaufe ich ein neues","ich kaufe ein neues , weil mein Handy alt ist"],["weil"],{ar:"موبايلي قديم، لهيك رح اشتري واحد جديد.",uk:"Мій телефон старий, тому я куплю новий.",tr:"Telefonum eski, bu yüzden yenisini alacağım.",en:"My phone is old, so I'm going to buy a new one."}],
+["konnektoren","es regnet , trotzdem gehe ich spazieren",".",["es regnet , ich gehe trotzdem spazieren","obwohl es regnet , gehe ich spazieren","ich gehe spazieren , obwohl es regnet"],["obwohl"],{ar:"عم تشتي، رغم هيك بطلع اتمشّى.",uk:"Іде дощ, але я все одно йду гуляти.",tr:"Yağmur yağıyor, yine de yürüyüşe çıkıyorum.",en:"It's raining, but I'm going for a walk anyway."}],
 ["konnektoren","ich brauche mehr Informationen , deswegen recherchiere ich im Internet",".",["ich brauche mehr Informationen , ich recherchiere deswegen im Internet"],[],{ar:"بحتاج معلومات أكتر، لهيك ببحث بالإنترنت.",uk:"Мені потрібно більше інформації, тому я шукаю в інтернеті.",tr:"Daha fazla bilgiye ihtiyacım var, bu yüzden internette araştırıyorum.",en:"I need more information, so I'm researching online."}],
 ["konnektoren","ich will das Fahrrad reparieren , darum sehe ich mir ein Video an",".",["ich will das Fahrrad reparieren , ich sehe mir darum ein Video an"],[],{ar:"بدي صلّح البسكليت، لهيك بتفرّج على فيديو.",uk:"Я хочу відремонтувати велосипед, тому дивлюся відео.",tr:"Bisikleti tamir etmek istiyorum, bu yüzden bir video izliyorum.",en:"I want to repair the bike, so I'm watching a video."}],
-["konnektoren","ich lerne Deutsch , denn ich möchte hier arbeiten",".",[],["weil"],{ar:"بتعلّم ألماني، لأني بدي اشتغل هون.",uk:"Я вчу німецьку, бо хочу тут працювати.",tr:"Almanca öğreniyorum, çünkü burada çalışmak istiyorum.",en:"I'm learning German because I want to work here."}],
-["konnektoren","ich war müde , trotzdem bin ich zum Kurs gegangen",".",["ich war müde , ich bin trotzdem zum Kurs gegangen"],["obwohl"],{ar:"كنت تعبان، رغم هيك رحت عالكورس.",uk:"Я був утомлений, але все одно пішов на курс.",tr:"Yorgundum, yine de kursa gittim.",en:"I was tired, but I went to the course anyway."}],
-["konnektoren","ich habe keine Zeit , denn ich muss arbeiten",".",[],["deshalb"],{ar:"ما عندي وقت، لأنه لازم اشتغل.",uk:"У мене немає часу, бо я мушу працювати.",tr:"Vaktim yok, çünkü çalışmam gerekiyor.",en:"I have no time because I have to work."}],
+["konnektoren","ich lerne Deutsch , denn ich möchte hier arbeiten",".",["ich lerne Deutsch , weil ich hier arbeiten möchte","weil ich hier arbeiten möchte , lerne ich Deutsch"],["weil"],{ar:"بتعلّم ألماني، لأني بدي اشتغل هون.",uk:"Я вчу німецьку, бо хочу тут працювати.",tr:"Almanca öğreniyorum, çünkü burada çalışmak istiyorum.",en:"I'm learning German because I want to work here."}],
+["konnektoren","ich war müde , trotzdem bin ich zum Kurs gegangen",".",["ich war müde , ich bin trotzdem zum Kurs gegangen","obwohl ich müde war , bin ich zum Kurs gegangen","ich bin zum Kurs gegangen , obwohl ich müde war"],["obwohl"],{ar:"كنت تعبان، رغم هيك رحت عالكورس.",uk:"Я був утомлений, але все одно пішов на курс.",tr:"Yorgundum, yine de kursa gittim.",en:"I was tired, but I went to the course anyway."}],
+["konnektoren","ich habe keine Zeit , denn ich muss arbeiten",".",["ich muss arbeiten , deshalb habe ich keine Zeit"],["deshalb"],{ar:"ما عندي وقت، لأنه لازم اشتغل.",uk:"У мене немає часу, бо я мушу працювати.",tr:"Vaktim yok, çünkü çalışmam gerekiyor.",en:"I have no time because I have to work."}],
 // sodass / so … dass
 ["sodass","das Essen ist so gut , dass ich jeden Tag komme",".",[],["sodass"],{ar:"الأكل طيب لدرجة إني بجي كل يوم.",uk:"Їжа така смачна, що я приходжу щодня.",tr:"Yemek o kadar güzel ki her gün geliyorum.",en:"The food is so good that I come every day."}],
 ["sodass","ich war krank , sodass ich nicht arbeiten konnte",".",[],["so"],{ar:"كنت مريض، فما قدرت اشتغل.",uk:"Я був хворий, тож не міг працювати.",tr:"Hastaydım, bu yüzden çalışamadım.",en:"I was ill, so I couldn't work."}],
@@ -1509,12 +1647,13 @@ window.EXAM_DE = {
  match:"Lesen Sie die Situationen und die Anzeigen. Welche Anzeige passt? Für eine Situation gibt es keine passende Anzeige. Wählen Sie dann X.",
  gap:"Lesen Sie den Text und wählen Sie für jede Lücke das passende Wort.",
  listen:"Sie hören fünf kurze Texte. Sie hören jeden Text höchstens zweimal. Wählen Sie die richtige Antwort.",
+ listen2:"Sie hören vier Gespräche. Sie hören jedes Gespräch höchstens zweimal. Wählen Sie die richtige Antwort.",
  write:"Schreiben Sie eine E-Mail (circa 80 Wörter). Schreiben Sie etwas zu allen Punkten."
 };
 
 window.EXAMS = [
 {
- id:"m1", title:"Modelltest 1", minutes:60,
+ id:"m1", title:"Kurztest 1", level:"A2/B1", minutes:60,
  parts:[
   {type:"rf", title:"Lesen 1", head:"Ein neues Leben in Bern",
    text:"Hallo zusammen! Vor einem Jahr bin ich mit meinem Mann und unseren zwei Kindern von Damaskus nach Bern gezogen. Am Anfang war alles sehr schwierig: Wir haben kaum Deutsch gesprochen und kannten niemanden. Zum Glück hat uns unsere Nachbarin, Frau Keller, viel geholfen. Sie hat uns gezeigt, wie man den Müll trennt und wo man günstig einkaufen kann.\n\nNach drei Monaten habe ich mit einem Deutschkurs angefangen. Der Kurs findet viermal pro Woche am Vormittag statt, deshalb kann ich ihn besuchen, während die Kinder in der Schule sind. Mein Mann arbeitet in einer Bäckerei und hat leider keine Zeit für einen Kurs. Er lernt abends mit einer App.\n\nInzwischen fühlen wir uns hier wohl. Die Kinder sprechen schon besser Deutsch als wir und korrigieren uns oft – das finden sie natürlich lustig. Mein nächstes Ziel ist die B1-Prüfung im Frühling. Danach möchte ich eine Ausbildung als Pflegefachfrau machen.\n\nSamira",
@@ -1556,13 +1695,15 @@ window.EXAMS = [
     ["Liebe Kundinnen und Kunden, heute gibt es in unserer Gemüseabteilung alle Tomaten zum halben Preis. Das Angebot gilt nur bis 18 Uhr.","Was ist heute billiger?",["Tomaten","Obst","Brot"]],
     ["Hallo Karim, hier ist Sandra. Ich kann heute Abend leider nicht ins Kino kommen, mein Sohn ist krank. Können wir am Freitag gehen?","Warum kommt Sandra nicht ins Kino?",["Ihr Sohn ist krank.","Sie muss arbeiten.","Das Kino ist geschlossen."]],
     ["Und nun das Wetter: Am Vormittag scheint noch die Sonne, am Nachmittag kommen von Westen Gewitter. Die Temperaturen liegen bei 24 Grad.","Wie wird das Wetter am Nachmittag?",["Es gibt Gewitter.","Es ist sonnig.","Es schneit."]]]},
-  {type:"write", title:"Schreiben", min:80,
-   task:"Ihr Kollege Marco hat eine neue Stelle in einer anderen Stadt. Er hat Sie zu seinem Abschiedsfest am Freitag eingeladen. Sie können nicht kommen. Schreiben Sie Marco eine E-Mail.",
-   points:["Bedanken Sie sich für die Einladung.","Erklären Sie, warum Sie nicht kommen können.","Wünschen Sie Marco viel Erfolg bei der neuen Stelle.","Machen Sie einen Vorschlag für ein Treffen."]}
+  {type:"write", title:"Schreiben", min:80, reg:"du",
+   task:"Ihr Arbeitskollege Marco (Sie duzen ihn) wechselt die Stelle und zieht in eine andere Stadt. Er hat Sie per E-Mail zu seinem Abschiedsfest am Freitagabend eingeladen. Sie können leider nicht kommen. Antworten Sie Marco mit einer E-Mail.",
+   tr:{ar:"زميلك بالشغل ماركو (بتحكي معه بـ du) عم يغيّر شغله وينتقل على مدينة تانية. عزمك بإيميل على حفلة الوداع يوم الجمعة بالليل، وإنت ما فيك تروح. رد على ماركو بإيميل.",uk:"Ваш колега Марко (ви з ним на «ти») змінює роботу й переїжджає в інше місто. Він запросив вас листом на прощальну вечірку в п’ятницю ввечері. Ви не можете прийти. Дайте Марко відповідь листом.",tr:"İş arkadaşınız Marco (onunla «du» diye konuşuyorsunuz) iş değiştiriyor ve başka bir şehre taşınıyor. Sizi e-postayla cuma akşamki veda partisine davet etti. Gelemiyorsunuz. Marco'ya e-postayla cevap verin.",en:"Your colleague Marco (you use “du” with him) is changing jobs and moving to another city. He invited you by email to his farewell party on Friday evening. You can't come. Reply to Marco by email."},
+   points:["Bedanken Sie sich für die Einladung.","Erklären Sie, warum Sie nicht kommen können.","Wünschen Sie Marco viel Erfolg bei der neuen Stelle.","Machen Sie einen Vorschlag für ein Treffen."],
+   ptr:[{ar:"اشكره على العزيمة.",uk:"Подякуйте за запрошення.",tr:"Davet için teşekkür edin.",en:"Thank him for the invitation."},{ar:"وضّح ليش ما فيك تيجي.",uk:"Поясніть, чому не можете прийти.",tr:"Neden gelemediğinizi açıklayın.",en:"Explain why you can't come."},{ar:"تمنّاله التوفيق بالشغل الجديد.",uk:"Побажайте успіху на новій роботі.",tr:"Yeni işinde başarılar dileyin.",en:"Wish him success in the new job."},{ar:"اقترح موعد تلتقو فيه.",uk:"Запропонуйте зустрітися.",tr:"Buluşmak için bir öneri yapın.",en:"Suggest meeting up."}]}
  ]
 },
 {
- id:"m2", title:"Modelltest 2", minutes:60,
+ id:"m2", title:"Kurztest 2", level:"A2/B1", minutes:60,
  parts:[
   {type:"rf", title:"Lesen 1", head:"Mein Arbeitstag als Velokurier",
    text:"Ich heiße Jonas, bin 27 Jahre alt und arbeite seit zwei Jahren als Velokurier in Zürich. Mein Arbeitstag beginnt um halb acht. Zuerst hole ich in der Zentrale mein Handy und die Liste mit den Aufträgen ab. Meistens bringe ich Dokumente zu Anwälten und Banken, manchmal auch Medikamente zu Apotheken.\n\nBei schönem Wetter liebe ich meinen Job: Ich bin den ganzen Tag draußen und brauche kein Fitnessstudio. Im Winter ist es aber oft hart, besonders wenn es schneit. Dann fahre ich langsamer, weil die Straßen gefährlich sind.\n\nDer Lohn ist nicht besonders hoch, aber ich kann meine Arbeitszeit selbst planen. Am Mittwoch arbeite ich nie, denn an diesem Tag studiere ich Informatik an einer Fernhochschule. In zwei Jahren möchte ich mein Studium abschließen und als Programmierer arbeiten.",
@@ -1605,10 +1746,139 @@ window.EXAMS = [
     ["Hier ist das Einwohneramt. Für Ihren neuen Ausweis brauchen wir noch ein aktuelles Foto. Bitte bringen Sie es bis Ende der Woche vorbei.","Was fehlt noch für den Ausweis?",["ein Foto","eine Unterschrift","eine Gebühr"]],
     ["Hallo Maria, ich bin's, Tom. Ich stehe gerade im Supermarkt. Brauchen wir noch Milch? Und soll ich Brot kaufen oder hast du schon welches?","Wo ist Tom gerade?",["im Supermarkt","zu Hause","in der Bäckerei"]]]},
   {type:"write", title:"Schreiben", min:80,
-   task:"Ihre Nachbarin, Frau Bauer, hört fast jeden Abend nach 22 Uhr sehr laut Musik. Schreiben Sie ihr eine höfliche Nachricht.",
-   points:["Beschreiben Sie das Problem.","Erklären Sie, warum das für Sie schwierig ist.","Bitten Sie Frau Bauer um etwas.","Schlagen Sie ein Gespräch vor."]}
+   reg:"Sie", task:"Ihre Nachbarin, Frau Bauer, hört fast jeden Abend nach 22 Uhr sehr laut Musik. Sie kennen Frau Bauer nur vom Treppenhaus. Schreiben Sie ihr einen höflichen Brief.",
+   tr:{ar:"جارتك السيدة Bauer بتسمع موسيقى عالية كتير تقريباً كل ليلة بعد الساعة 10. بتعرفها بس من الدرج. اكتبلها رسالة مهذبة ورسمية (بـ Sie).",uk:"Ваша сусідка пані Бауер майже щовечора після 22:00 дуже голосно слухає музику. Ви знаєте її лише з під’їзду. Напишіть їй ввічливий лист (на «Sie»).",tr:"Komşunuz Bayan Bauer neredeyse her akşam saat 22'den sonra çok yüksek sesle müzik dinliyor. Onu sadece merdivenlerden tanıyorsunuz. Ona kibar bir mektup yazın («Sie» ile).",en:"Your neighbour Ms Bauer plays very loud music almost every evening after 10 pm. You only know her from the stairwell. Write her a polite letter (using “Sie”)."},
+   points:["Beschreiben Sie das Problem.","Erklären Sie, warum das für Sie schwierig ist.","Bitten Sie Frau Bauer um etwas.","Schlagen Sie ein Gespräch vor."],
+   ptr:[{ar:"اوصف المشكلة.",uk:"Опишіть проблему.",tr:"Sorunu anlatın.",en:"Describe the problem."},{ar:"وضّح ليش هالشي صعب عليك.",uk:"Поясніть, чому це для вас важко.",tr:"Bunun sizin için neden zor olduğunu açıklayın.",en:"Explain why this is difficult for you."},{ar:"اطلب منها شي.",uk:"Попросіть пані Бауер про щось.",tr:"Bayan Bauer'den bir şey rica edin.",en:"Ask Ms Bauer for something."},{ar:"اقترح تحكو مع بعض.",uk:"Запропонуйте поговорити.",tr:"Konuşmayı önerin.",en:"Suggest a conversation."}]}
+ ]
+},
+{
+ id:"b1a", title:"Modelltest B1 – 1", level:"B1", minutes:100,
+ parts:[
+  {type:"rf", title:"Lesen 1", head:"Zurück in die Ausbildung – mit 38",
+   text:"Vor sechs Jahren bin ich mit meiner Familie aus Syrien in die Schweiz gekommen. In meiner Heimat war ich Elektriker und hatte ein eigenes kleines Geschäft. Hier wurde mein Diplom leider nicht anerkannt. Deshalb habe ich zuerst in einem Lager gearbeitet und Pakete sortiert. Die Arbeit war körperlich anstrengend, aber ich war froh, dass ich überhaupt eine Stelle hatte und meine Familie nicht vom Sozialamt abhängig war.\n\nMein Chef im Lager hat bald gemerkt, dass ich mich mit Technik gut auskenne. Wenn eine Maschine kaputt war, hat er oft mich gerufen. Eines Tages hat er mich gefragt, warum ich nicht als Elektriker arbeite. Ich habe ihm erklärt, dass ich dafür einen Schweizer Abschluss brauche. Er hat mir dann von der Möglichkeit erzählt, eine verkürzte Lehre für Erwachsene zu machen.\n\nAm Anfang hatte ich große Zweifel. Ich bin 38 Jahre alt und sitze jetzt zwei Tage pro Woche mit 17-Jährigen in der Berufsschule. Die Theorie war nicht das Problem, aber die Fachwörter auf Deutsch waren sehr schwierig. Ich habe mir für jedes neue Wort eine Karteikarte gemacht und jeden Abend eine halbe Stunde gelernt. Meine Frau hat mich dabei immer unterstützt, obwohl sie selbst Teilzeit arbeitet und sich um die Kinder kümmert.\n\nInzwischen bin ich im zweiten Lehrjahr. Die jungen Kollegen in der Klasse fragen mich oft um Rat, wenn sie bei der praktischen Arbeit nicht weiterwissen. Das macht mich stolz. Natürlich verdiene ich während der Lehre weniger als im Lager, aber mein Arbeitgeber zahlt mir einen Teil meines alten Lohns weiter. Nächsten Sommer habe ich die Abschlussprüfung. Mein Ziel ist es, in einigen Jahren wieder ein eigenes Geschäft zu eröffnen – diesmal in der Schweiz.\n\nTarek",
+   items:[
+    ["Tarek konnte in der Schweiz sofort als Elektriker arbeiten.",false],
+    ["Tarek war froh über die Stelle im Lager, weil er selbst Geld verdient hat.",true],
+    ["Die Idee mit der Lehre kam von Tareks Chef.",true],
+    ["In der Berufsschule hatte Tarek vor allem mit der Theorie Probleme.",false],
+    ["Die jüngeren Mitschüler fragen Tarek bei der praktischen Arbeit um Hilfe.",true],
+    ["Während der Lehre verdient Tarek gleich viel wie früher im Lager.",false]]},
+  {type:"mc", title:"Lesen 2", head:"Gärtnern mitten in der Stadt",
+   text:"Wer in der Stadt wohnt, hat meistens keinen eigenen Garten. Trotzdem wollen immer mehr Menschen ihr eigenes Gemüse anbauen. In vielen Schweizer Städten gibt es deshalb sogenannte Gemeinschaftsgärten: Flächen, die von mehreren Personen oder Familien zusammen bewirtschaftet werden.\n\nEiner dieser Gärten liegt in Basel, direkt neben einem ehemaligen Güterbahnhof. Vor fünf Jahren war hier nur eine leere Fläche aus Beton. Heute wachsen auf rund 2000 Quadratmetern Tomaten, Salat, Kräuter und sogar Kartoffeln. Etwa 80 Personen aus 25 Ländern machen mit. «Viele kommen nicht nur wegen des Gemüses», erzählt die Projektleiterin Sandra Frei. «Für manche ist der Garten der einzige Ort, wo sie regelmäßig Kontakt zu ihren Nachbarn haben.» Besonders für ältere Menschen, die allein leben, und für neu zugezogene Familien sei das wichtig.\n\nWer mitmachen möchte, braucht keine Erfahrung. Jedes neue Mitglied bekommt in den ersten Wochen eine Patin oder einen Paten, die oder der die wichtigsten Arbeiten erklärt. Pro Jahr zahlt man einen Beitrag von 60 Franken; Werkzeuge, Samen und Wasser sind inklusive. Außerdem muss jedes Mitglied pro Monat mindestens vier Stunden bei gemeinsamen Arbeiten helfen, zum Beispiel beim Kompost oder beim Reparieren der Wege.\n\nNicht alle Anwohner waren am Anfang begeistert. Einige hatten Angst vor Lärm und Unordnung. Inzwischen hat sich die Situation beruhigt: Der Garten schließt um 21 Uhr, und einmal im Jahr lädt das Team die ganze Nachbarschaft zu einem Erntefest ein. Die Stadt unterstützt das Projekt seit letztem Jahr finanziell. Ganz sicher ist die Zukunft aber nicht: Auf dem Gelände sollen in sieben Jahren neue Wohnungen gebaut werden. Frau Frei hofft, dass der Garten dann einen neuen Platz in der Nähe bekommt.",
+   items:[
+    ["Was war früher an der Stelle des Gartens?",["eine leere Fläche aus Beton","ein Güterbahnhof","ein privater Garten"]],
+    ["Warum kommen laut Sandra Frei viele Leute in den Garten?",["Sie suchen Kontakt zu anderen Menschen.","Sie können dort billig Gemüse kaufen.","Sie finden dort eine bezahlte Arbeit."]],
+    ["Was bekommen neue Mitglieder?",["eine Person, die ihnen am Anfang hilft","Werkzeuge für ihren Garten zu Hause","einen Gartenkurs bei der Stadt"]],
+    ["Was müssen alle Mitglieder machen?",["jeden Monat bei gemeinsamen Arbeiten helfen","jedes Jahr das Erntefest organisieren","ihr Gemüse mit den Nachbarn teilen"]],
+    ["Was ist für die Zukunft geplant?",["Auf dem Gelände sollen Wohnungen entstehen.","Die Stadt will den Garten vergrößern.","Der Garten soll abends länger offen sein."]]]},
+  {type:"match", title:"Lesen 3",
+   ads:[
+    ["a","Sprachcafé International: jeden Donnerstag, 19–21 Uhr, Bibliothek West. Deutsch sprechen in gemütlicher Atmosphäre. Gratis, ohne Anmeldung – kommen Sie, wann Sie wollen."],
+    ["b","Nachhilfe für Schulkinder (1.–6. Klasse) in Mathematik und Deutsch. Erfahrene Studentin, 25 Franken pro Stunde, auch bei Ihnen zu Hause."],
+    ["c","Umzugsfirma Blitz: Wir zügeln Ihre Wohnung schnell und günstig. Auf Wunsch mit Endreinigung und Abnahmegarantie."],
+    ["d","Velokurs für Erwachsene: Sie haben nie Velo fahren gelernt? In fünf Lektionen sicher im Verkehr. Samstagmorgen."],
+    ["e","Computerkurs 60+: Smartphone und Tablet einfach erklärt. Kleine Gruppen, viel Zeit für Fragen. Montag, 14–16 Uhr."],
+    ["f","Mittagstisch für Familien: jeden Mittwoch gesundes Essen, Erwachsene 8 Franken, Kinder gratis. Kirchgemeindehaus."],
+    ["g","Bewerbungswerkstatt: Wir prüfen Ihren Lebenslauf und üben mit Ihnen Vorstellungsgespräche. Kostenlos für Stellensuchende, Termin nötig."],
+    ["h","Kinderkleider- und Spielzeugbörse: Samstag, 9–12 Uhr, Turnhalle Matte. Verkaufstische bis Mittwoch reservieren."],
+    ["i","Mieterverband: Probleme mit dem Vermieter? Beratung durch Fachleute. Für Mitglieder gratis, sonst 40 Franken."],
+    ["j","Fitness im Park: Gratis-Training für alle, jeden Dienstag um 18 Uhr bei der Sporthalle. Bei Regen kein Training."]],
+   items:[
+    ["Ihr Sohn (9 Jahre) hat Probleme in Mathematik und braucht Unterstützung.","b"],
+    ["Sie möchten Ihr Deutsch verbessern, haben aber wenig Geld und keine festen Zeiten.","a"],
+    ["Ihre Mutter (67) hat ein neues Handy und versteht es nicht.","e"],
+    ["Sie ziehen um und müssen die alte Wohnung sauber abgeben.","c"],
+    ["Ihr Vermieter will Ihnen die Kaution nicht zurückzahlen.","i"],
+    ["Sie suchen eine neue Stelle und möchten sich auf das Gespräch vorbereiten.","g"],
+    ["Sie möchten am Wochenende einen Schwimmkurs für Erwachsene besuchen.","x"]]},
+  {type:"gap", title:"Sprachbausteine",
+   text:"Sehr geehrte Damen und Herren\n\nich habe Ihre Anzeige im «Stadtanzeiger» gelesen und interessiere mich {1} den Deutschkurs B1 am Abend. Leider steht in der Anzeige nicht, {2} der Kurs genau beginnt. Könnten Sie mir {3} sagen, wie viele Personen in einer Gruppe sind?\n\nIch arbeite in einem Restaurant und habe nur am Montag und Dienstag frei. {4} wäre ein Kurs an diesen Tagen ideal für mich. Ich habe schon einen A2-Kurs besucht, {5} habe ich noch Probleme mit der Grammatik. {6} meiner Arbeit spreche ich zwar viel Deutsch, aber meistens nur kurze Sätze.\n\nAußerdem möchte ich wissen, {7} man den Kurs in Raten bezahlen kann. Der Kurs kostet 890 Franken, und das ist für mich zu viel Geld {8} einmal. Gibt es vielleicht eine Ermäßigung für Personen, {9} wenig verdienen?\n\nIch {10} mich sehr über eine baldige Antwort freuen. Sie erreichen mich jeden Tag {11} 9 und 11 Uhr unter der Nummer 079 345 12 89. Vielen Dank {12} voraus.\n\nFreundliche Grüße\nAmina Rahimi",
+   items:[["für","an","über"],["wann","wenn","als"],["außerdem","obwohl","sondern"],["Deshalb","Weil","Obwohl"],["trotzdem","aber","obwohl"],["Bei","Mit","Von"],["ob","dass","wenn"],["auf","für","in"],["die","denen","deren"],["würde","wäre","hätte"],["zwischen","von","bis"],["im","in","am"]]},
+  {type:"listen", title:"Hören 1",
+   items:[
+    ["Liebe Fahrgäste, wegen Bauarbeiten zwischen Olten und Aarau fallen heute ab 20 Uhr alle Züge auf dieser Strecke aus. Bitte benutzen Sie die Ersatzbusse. Diese fahren direkt vor dem Bahnhofgebäude ab, auf der Seite der Post. Rechnen Sie mit etwa 25 Minuten längerer Fahrzeit. Fahrgäste in Richtung Zürich sind nicht betroffen.","Was sollen Fahrgäste nach Aarau ab 20 Uhr tun?",["den Bus vor dem Bahnhof nehmen","über Zürich fahren","25 Minuten am Gleis warten"]],
+    ["Grüezi Frau Lopez, hier spricht Herr Wenger von der Garage Central. Ihr Auto ist fertig, wir haben die Bremsen gewechselt. Leider mussten wir auch die Batterie ersetzen, deshalb wird die Rechnung etwas höher als besprochen: ungefähr 480 statt 350 Franken. Sie können das Auto heute bis 18 Uhr oder morgen ab 7 Uhr abholen. Am Samstag haben wir geschlossen.","Warum kostet die Reparatur mehr als geplant?",["Die Batterie musste auch ersetzt werden.","Die Bremsen waren teurer als gedacht.","Das Auto musste länger in der Garage bleiben."]],
+    ["Und nun eine Information für alle Eltern: Ab dem neuen Schuljahr können Kinder in der Stadt Luzern auch am Mittwochnachmittag in der Tagesschule betreut werden. Bisher war das nur am Montag, Dienstag und Donnerstag möglich. Die Anmeldung ist ab sofort online möglich, spätestens aber bis Ende Mai. Die Kosten hängen vom Einkommen der Eltern ab.","Was ist neu?",["Die Kinder können auch am Mittwochnachmittag betreut werden.","Die Betreuung in der Tagesschule ist jetzt gratis.","Man kann sich nur noch online anmelden."]],
+    ["Sehr geehrte Kundinnen und Kunden, wegen eines technischen Problems können Sie an den Kassen 3 bis 6 im Moment nur bar bezahlen. An den Kassen 1 und 2 und an den Self-Checkout-Kassen funktioniert die Kartenzahlung normal. Wir entschuldigen uns für die Unannehmlichkeiten.","Wo kann man im Moment mit Karte bezahlen?",["an den Kassen 1 und 2","an den Kassen 3 bis 6","nur an der Information"]],
+    ["Hoi Daniel, hier ist Mirjam. Du, wegen Samstag: Das Grillfest findet auf jeden Fall statt, auch wenn das Wetter schlecht ist – dann sitzen wir einfach in der Garage. Könntest du statt Salat lieber Getränke mitbringen? Salat haben wir schon genug, Lea bringt zwei Schüsseln. Und komm doch schon um fünf statt um sechs, dann kannst du Marco beim Aufbauen helfen.","Was soll Daniel mitbringen?",["Getränke","Salat","einen Grill"]]]},
+  {type:"listen", inst:"listen2", title:"Hören 2",
+   items:[
+    [[["A","Praxis Doktor Steiner, Imhof, guten Tag."],["B","Guten Tag, hier ist Yilmaz. Ich habe morgen um neun Uhr einen Termin, aber mein Sohn ist krank geworden und ich kann ihn nicht allein lassen."],["A","Möchten Sie den Termin verschieben? Ich hätte am Donnerstag um 16 Uhr oder nächste Woche am Montag um halb zehn etwas frei."],["B","Donnerstag ist schlecht, da arbeite ich bis 17 Uhr. Dann lieber Montag."],["A","Gut, dann Montag um 9 Uhr 30. Bringen Sie bitte Ihre neue Versicherungskarte mit."]],"Wann ist der neue Termin?",["am Montag um 9.30 Uhr","am Donnerstag um 16 Uhr","morgen um 9 Uhr"]],
+    [[["A","Sag mal, gehst du am Freitag auch zum Teamessen?"],["B","Eigentlich schon, aber ich weiß noch nicht, wie ich danach nach Hause komme. Der letzte Bus fährt schon um elf."],["A","Ich fahre mit dem Auto. Ich kann dich mitnehmen, du wohnst ja fast auf meinem Weg."],["B","Echt? Das wäre super, vielen Dank!"]],"Wie kommt die Person B nach dem Essen nach Hause?",["Die Kollegin nimmt sie im Auto mit.","Sie nimmt den letzten Bus.","Sie fährt mit ihrem eigenen Auto."]],
+    [[["A","Grüezi Herr Brunner, hier ist Khalil aus dem dritten Stock. In unserem Badezimmer tropft seit gestern Wasser von der Decke."],["B","Oh, das ist nicht gut. Wahrscheinlich ist das ein Problem in der Wohnung darüber. Ich rufe sofort den Sanitär an. Sind Sie heute Nachmittag zu Hause?"],["A","Ich nicht, aber meine Frau ist ab zwei Uhr da."],["B","Gut, dann sage ich dem Sanitär, dass er nach zwei Uhr kommen soll."]],"Wer ist am Nachmittag zu Hause, wenn der Sanitär kommt?",["die Frau von Herrn Khalil","Herr Khalil","Herr Brunner"]],
+    [[["A","Guten Tag, ich möchte mich für den Kurs «Deutsch für den Beruf» anmelden."],["B","Gern. Der Kurs am Dienstagabend ist leider schon voll. Es gibt aber noch Plätze am Samstagvormittag."],["A","Samstag geht leider nicht, da arbeite ich. Gibt es eine Warteliste für Dienstag?"],["B","Ja, ich kann Sie auf die Warteliste setzen. Wenn jemand absagt, rufe ich Sie an."]],"Was passiert am Ende?",["Die Person kommt auf eine Warteliste.","Die Person meldet sich für Samstag an.","Die Person bekommt einen Platz am Dienstag."]]]},
+  {type:"write", title:"Schreiben", min:80, reg:"Sie",
+   task:"Sie haben bei einem Sportverein einen Schwimmkurs für Erwachsene gebucht und schon 180 Franken bezahlt. Jetzt hat Ihr Arbeitgeber Ihre Arbeitszeiten geändert und Sie können nicht mehr am Kurs teilnehmen. Schreiben Sie eine E-Mail an die Kursleiterin, Frau Hofer.",
+   tr:{ar:"حجزت دورة سباحة للكبار بنادي رياضي ودفعت 180 فرنك. هلق شغلك غيّرلك أوقات الدوام وما عاد فيك تحضر الدورة. اكتب إيميل رسمي لمسؤولة الدورة، السيدة Hofer.",uk:"Ви записалися на курс плавання для дорослих у спортивному клубі й уже заплатили 180 франків. Тепер роботодавець змінив ваш графік, і ви не можете відвідувати курс. Напишіть офіційний лист керівниці курсу, пані Гофер.",tr:"Bir spor kulübünde yetişkinler için yüzme kursuna kaydoldunuz ve 180 frank ödediniz. Şimdi işvereniniz çalışma saatlerinizi değiştirdi ve kursa katılamıyorsunuz. Kurs sorumlusu Bayan Hofer'e resmi bir e-posta yazın.",en:"You booked a swimming course for adults at a sports club and have already paid 180 francs. Now your employer has changed your working hours and you can no longer attend. Write a formal email to the course leader, Ms Hofer."},
+   points:["Warum schreiben Sie?","Warum können Sie nicht mehr teilnehmen?","Bitten Sie um Ihr Geld zurück oder um einen anderen Kurs.","Wie und wann kann man Sie erreichen?"],
+   ptr:[{ar:"ليش عم تكتب؟",uk:"Чому ви пишете?",tr:"Neden yazıyorsunuz?",en:"Why are you writing?"},{ar:"ليش ما عاد فيك تحضر؟",uk:"Чому ви більше не можете відвідувати?",tr:"Neden artık katılamıyorsunuz?",en:"Why can't you attend any more?"},{ar:"اطلب ترجعلك المصاري أو دورة تانية.",uk:"Попросіть повернути гроші або інший курс.",tr:"Paranızı geri ya da başka bir kurs isteyin.",en:"Ask for your money back or a different course."},{ar:"كيف وأيمتى فيهن يتواصلو معك؟",uk:"Як і коли з вами можна зв’язатися?",tr:"Size nasıl ve ne zaman ulaşılabilir?",en:"How and when can they reach you?"}]}
+ ]
+},
+{
+ id:"b1b", title:"Modelltest B1 – 2", level:"B1", minutes:100,
+ parts:[
+  {type:"rf", title:"Lesen 1", head:"Unser Leben ohne Auto",
+   text:"Seit drei Jahren lebt unsere Familie ohne eigenes Auto. Als unser alter Wagen kaputtging, hätte die Reparatur über 3000 Franken gekostet. Mein Mann und ich haben lange diskutiert und dann beschlossen, es einfach einmal ein Jahr lang ohne Auto zu versuchen. Unsere Freunde haben gelacht und gesagt, dass wir es keine drei Monate schaffen.\n\nHeute können wir uns ein Leben mit Auto kaum noch vorstellen. Zur Arbeit fahre ich mit dem Velo, mein Mann nimmt den Zug. Die Kinder gehen zu Fuß zur Schule, was sie am Anfang gar nicht toll fanden. Für den Wocheneinkauf haben wir einen Veloanhänger gekauft. Wenn wir doch einmal ein Auto brauchen, zum Beispiel für einen Ausflug in die Berge oder um große Möbel zu transportieren, mieten wir eins bei einer Carsharing-Organisation. Das Auto steht nur fünf Minuten von unserer Wohnung entfernt und kann einfach mit dem Handy reserviert werden.\n\nNatürlich ist nicht alles perfekt. Im Winter, wenn es dunkel und kalt ist, vermisse ich das Auto manchmal. Und spontane Ausflüge sind schwieriger, weil das Carsharing-Auto am Wochenende oft schon reserviert ist. Wir planen jetzt einfach früher.\n\nAm meisten überrascht hat uns, wie viel Geld wir sparen. Früher haben wir für Versicherung, Benzin, Parkplatz und Reparaturen jedes Jahr fast 8000 Franken ausgegeben. Heute zahlen wir für Generalabonnement, Carsharing und ab und zu ein Taxi weniger als die Hälfte. Mit dem gesparten Geld sind wir letzten Sommer zum ersten Mal mit der ganzen Familie nach Portugal geflogen.\n\nKarin",
+   items:[
+    ["Die Familie hat das alte Auto nicht reparieren lassen, weil das zu teuer gewesen wäre.",true],
+    ["Die Freunde fanden die Idee von Anfang an gut.",false],
+    ["Die Kinder waren am Anfang nicht begeistert, zu Fuß zur Schule zu gehen.",true],
+    ["Für Ausflüge leiht die Familie das Auto von Freunden.",false],
+    ["Am Wochenende ist es nicht immer leicht, ein Carsharing-Auto zu bekommen.",true],
+    ["Heute gibt die Familie für Mobilität ungefähr gleich viel Geld aus wie früher.",false]]},
+  {type:"mc", title:"Lesen 2", head:"Essen retten statt wegwerfen",
+   text:"In der Schweiz landen jedes Jahr rund 2,8 Millionen Tonnen Lebensmittel im Abfall. Das ist ungefähr ein Drittel aller Lebensmittel, die produziert werden. Ein großer Teil davon wird nicht in Restaurants oder Supermärkten weggeworfen, sondern in privaten Haushalten. Viele Menschen kaufen mehr, als sie brauchen, oder werfen Produkte weg, sobald das Datum auf der Packung abgelaufen ist.\n\nGegen dieses Problem kämpfen verschiedene Organisationen. Eine besonders erfolgreiche Idee ist eine App, mit der Bäckereien, Restaurants und Geschäfte am Ende des Tages übrig gebliebenes Essen günstig anbieten. Die Kundinnen und Kunden reservieren über die App eine sogenannte Überraschungstüte und holen sie zu einer bestimmten Zeit ab. Was genau in der Tüte ist, weiß man vorher nicht. Dafür bezahlt man meistens nur etwa ein Drittel des normalen Preises.\n\nDaniela Moser hat eine kleine Bäckerei in Winterthur und macht seit zwei Jahren mit. «Früher mussten wir jeden Abend Brot und Gebäck wegwerfen. Das hat mir jedes Mal wehgetan», sagt sie. Heute verkauft sie fast alles. Reich wird sie dadurch nicht, denn ein Teil des Geldes geht an die Firma, die die App betreibt. «Aber ich habe neue Kunden gewonnen. Viele kommen zuerst wegen der Tüte und später auch tagsüber.»\n\nFachleute betonen aber, dass Apps allein das Problem nicht lösen. Wichtig sei vor allem, zu Hause besser zu planen: eine Einkaufsliste schreiben, Reste einfrieren und Produkte nicht sofort wegwerfen, wenn das Mindesthaltbarkeitsdatum vorbei ist. «Viele Lebensmittel sind noch Tage oder sogar Wochen später gut», erklärt eine Sprecherin der Konsumentenorganisation. «Man sollte sie einfach anschauen, riechen und probieren.»",
+   items:[
+    ["Wo wird laut Text besonders viel Essen weggeworfen?",["in privaten Haushalten","vor allem in Restaurants","vor allem in Supermärkten"]],
+    ["Was ist eine «Überraschungstüte»?",["Essen vom gleichen Tag, das man günstig kaufen kann","ein Geschenk für neue Kunden","eine Tüte mit Produkten aus dem Ausland"]],
+    ["Was weiß man vor dem Abholen nicht?",["was in der Tüte ist","wann man die Tüte abholen kann","wie viel die Tüte kostet"]],
+    ["Was sagt Daniela Moser über die App?",["Sie hat dadurch neue Kunden bekommen.","Sie verdient damit sehr viel Geld.","Sie muss jetzt mehr Brot backen."]],
+    ["Was empfehlen die Fachleute?",["Lebensmittel nach dem Datum zuerst prüfen","nur noch mit einer App einkaufen","weniger frische Produkte kaufen"]]]},
+  {type:"match", title:"Lesen 3",
+   ads:[
+    ["a","Kinderkrippe Sonnenschein: freie Plätze für Kinder von 3 Monaten bis 4 Jahren, Montag bis Freitag 6.30–18.30 Uhr. Tarif nach Einkommen."],
+    ["b","Spielgruppe Wichtelhaus: für Kinder ab 3 Jahren, zwei Vormittage pro Woche. Eltern bleiben am ersten Tag dabei."],
+    ["c","Elektro Huber: Reparatur von Waschmaschinen, Kühlschränken und Herden. Notdienst auch am Wochenende."],
+    ["d","Stadtbibliothek: Neu auch Bücher und Filme in 15 Sprachen. Ausleihe für Kinder bis 16 Jahre gratis."],
+    ["e","Restaurant Linde sucht Aushilfe im Service, Montag bis Freitag 11–14 Uhr. Erfahrung nicht nötig."],
+    ["f","Altersheim Rosenau sucht Nachtwache (80 %). Erfahrung in der Pflege nötig."],
+    ["g","Fahrschule Go: Theorie- und Fahrstunden auch auf Englisch, Arabisch und Türkisch. Erste Lektion gratis."],
+    ["h","Gebrauchte Waschmaschine, 3 Jahre alt, top Zustand, 250 Franken. Nur Abholung."],
+    ["i","Tanzkurs für Paare: Salsa und Tango, freitags 20 Uhr. Anfänger willkommen."],
+    ["j","Hausaufgabenhilfe in der Bibliothek: Montag bis Donnerstag 15–17 Uhr, für Schülerinnen und Schüler der 5.–9. Klasse, gratis."]],
+   items:[
+    ["Sie arbeiten Vollzeit und suchen eine Betreuung für Ihr Baby (8 Monate).","a"],
+    ["Ihre Waschmaschine ist am Samstagabend kaputtgegangen.","c"],
+    ["Ihr Sohn (12) braucht nach der Schule Hilfe bei den Hausaufgaben.","j"],
+    ["Sie möchten den Führerschein machen, aber Ihr Deutsch ist noch nicht so gut.","g"],
+    ["Sie suchen eine Teilzeitstelle am Mittag, während Ihre Kinder in der Schule sind.","e"],
+    ["Ihre Tochter (10) liest gern und möchte Bücher auf Arabisch.","d"],
+    ["Sie möchten mit Ihrem Mann einen Kochkurs besuchen.","x"]]},
+  {type:"gap", title:"Sprachbausteine",
+   text:"Sehr geehrte Frau Graf\n\nich wohne {1} zwei Jahren in der Wohnung im ersten Stock an der Bahnhofstraße 12. Leider muss ich mich heute {2} ein Problem beschweren. Seit drei Wochen funktioniert die Heizung im Kinderzimmer nicht mehr richtig. Ich habe den Hauswart schon zweimal angerufen, {3} bis jetzt ist niemand gekommen.\n\nDas Zimmer ist nachts nur 15 Grad warm, {4} schläft meine Tochter jetzt im Wohnzimmer. Das ist keine Lösung, {5} sie hat dort keine Ruhe für ihre Hausaufgaben. Außerdem habe ich Angst, {6} sie krank wird.\n\nIch bitte Sie deshalb, das Problem so schnell {7} möglich zu lösen. Bitte teilen Sie mir mit, {8} ein Handwerker kommen kann. Ich bin von Montag bis Freitag ab 16 Uhr zu Hause. Wenn es nur am Vormittag geht, {9} ich auch meine Nachbarin bitten, die Tür zu öffnen.\n\nFalls die Reparatur länger dauert, möchte ich wissen, {10} ich für diese Zeit weniger Miete bezahlen kann.\n\nIch danke Ihnen {11} Ihre Hilfe und freue mich {12} Ihre Antwort.\n\nFreundliche Grüße\nOlena Kovalenko",
+   items:[["seit","vor","für"],["über","für","auf"],["aber","denn","sondern"],["deshalb","weil","obwohl"],["denn","deshalb","trotzdem"],["dass","ob","wenn"],["wie","als","so"],["wann","wenn","als"],["kann","kannst","können"],["ob","dass","weil"],["für","über","auf"],["auf","an","zu"]]},
+  {type:"listen", title:"Hören 1",
+   items:[
+    ["Achtung, Achtung: Das Freibad schließt heute wegen eines Gewitters bereits um 16 Uhr. Wer ein Saisonabonnement hat, darf morgen ausnahmsweise schon um 8 statt um 9 Uhr kommen. Wir bitten alle Gäste, das Wasser jetzt zu verlassen.","Was gilt morgen für Gäste mit Saisonabonnement?",["Sie dürfen eine Stunde früher kommen.","Sie müssen um 16 Uhr gehen.","Sie bekommen Geld zurück."]],
+    ["Guten Tag, hier ist Frau Studer vom Personalbüro der Firma Kessler. Vielen Dank für Ihre Bewerbung als Lagermitarbeiter. Wir möchten Sie gern kennenlernen. Leider ist der Termin am Montag nicht mehr möglich, weil unser Lagerchef krank ist. Können Sie stattdessen am Mittwoch um 14 Uhr kommen? Bringen Sie bitte Ihre Arbeitszeugnisse mit und bestätigen Sie den Termin per E-Mail.","Was soll der Bewerber tun?",["den neuen Termin per E-Mail bestätigen","am Montag zur Firma kommen","seine Zeugnisse per Post schicken"]],
+    ["Die Stadt erinnert: Ab dem 1. Oktober kostet ein 35-Liter-Abfallsack nicht mehr 2 Franken, sondern 2 Franken 20. Grund sind die höheren Kosten für die Entsorgung. Papier und Karton werden weiterhin gratis abgeholt, jeden zweiten Dienstag.","Was wird teurer?",["die Abfallsäcke","die Entsorgung von Papier","die Abholung von Karton"]],
+    ["Liebe Eltern, der Elternabend der Klasse 4b findet nicht wie geplant am Donnerstag, sondern schon am Dienstag, den 12. März, um 19 Uhr statt. Wir treffen uns im Musikzimmer im Erdgeschoss. Für Eltern, die eine Übersetzung brauchen, organisieren wir gern eine Dolmetscherin. Bitte melden Sie sich dafür bis Freitag.","Bis wann muss man sich melden, wenn man eine Übersetzung braucht?",["bis Freitag","bis Dienstag","bis Donnerstag"]],
+    ["Hallo Sara, hier ist Ben. Ich stehe gerade im Baumarkt und finde die Farbe nicht, die du wolltest. Weiß gibt es nur in großen Eimern, und die sind ziemlich teuer. Soll ich lieber den hellgrauen Ton nehmen? Der ist im Angebot. Ruf mich kurz zurück, ich warte an der Kasse.","Warum ruft Ben an?",["Er weiß nicht, welche Farbe er kaufen soll.","Er hat die Farbe schon gekauft.","Der Baumarkt ist geschlossen."]]]},
+  {type:"listen", inst:"listen2", title:"Hören 2",
+   items:[
+    [[["A","Entschuldigung, ist das hier die Schlange für die Wohnsitzbestätigung?"],["B","Nein, hier gibt man nur Formulare ab. Für Bestätigungen müssen Sie eine Nummer ziehen. Der Automat steht neben dem Lift."],["A","Und wie lange muss man ungefähr warten?"],["B","Heute ist viel los, sicher eine halbe Stunde. Sie können die Bestätigung aber auch online bestellen, dann kommt sie in drei Tagen per Post."],["A","Ich brauche sie leider schon morgen. Dann warte ich."]],"Was macht die Frau?",["Sie zieht eine Nummer und wartet.","Sie bestellt die Bestätigung online.","Sie gibt ein Formular ab."]],
+    [[["A","Na, wie war dein erster Arbeitstag im Spital?"],["B","Anstrengend, aber schön. Die Kolleginnen sind sehr nett. Nur die Schichten sind ein Problem: Nächste Woche habe ich dreimal Nachtdienst."],["A","Und wer schaut dann nach den Kindern?"],["B","Meine Mutter kommt zum Glück für zwei Wochen zu uns. Danach muss ich eine andere Lösung finden."]],"Wer kümmert sich nächste Woche um die Kinder?",["die Mutter von Person B","eine Kollegin aus dem Spital","eine Nachbarin"]],
+    [[["A","Guten Abend, ich hätte gern einen Tisch für vier Personen, am Samstag um 19 Uhr."],["B","Am Samstag um sieben sind wir leider ausgebucht. Ich könnte Ihnen einen Tisch um halb sechs oder um neun Uhr anbieten."],["A","Halb sechs ist zu früh, wir kommen direkt von der Arbeit. Dann nehmen wir den Tisch um neun."],["B","Gern. Auf welchen Namen?"]],"Um wie viel Uhr gehen die vier Personen essen?",["um 21 Uhr","um 19 Uhr","um 17.30 Uhr"]],
+    [[["A","Hast du gehört? Ab Januar gibt es in unserer Firma keine Gratis-Parkplätze mehr."],["B","Ja, ärgerlich. Aber dafür bezahlt die Firma jetzt die Hälfte vom Zug-Abo."],["A","Für mich ist das schlecht. Mit dem Zug bräuchte ich über eine Stunde."],["B","Du wohnst doch auch in Muri, oder? Wir könnten zusammen mit dem Auto fahren und die Parkgebühr teilen."]],"Was schlägt Person B vor?",["zusammen mit dem Auto zu fahren","mit dem Zug zu fahren","näher an die Firma zu ziehen"]]]},
+  {type:"write", title:"Schreiben", min:80, reg:"du",
+   task:"Ihre Freundin Nadia hat ein Baby bekommen. Sie hat Ihnen ein Foto geschickt und Sie zu einem Besuch eingeladen. Schreiben Sie Nadia eine E-Mail.",
+   tr:{ar:"صاحبتك نادية جابت بيبي. بعتتلك صورة وعزمتك تزورها. اكتب لنادية إيميل (غير رسمي، بـ du).",uk:"Ваша подруга Надія народила дитину. Вона надіслала вам фото й запросила в гості. Напишіть Надії лист (неофіційний, на «du»).",tr:"Arkadaşınız Nadia'nın bebeği oldu. Size bir fotoğraf gönderdi ve sizi ziyarete davet etti. Nadia'ya bir e-posta yazın (samimi, «du» ile).",en:"Your friend Nadia has had a baby. She sent you a photo and invited you to visit. Write Nadia an email (informal, using “du”)."},
+   points:["Gratulieren Sie Nadia.","Fragen Sie, wie es ihr und dem Baby geht.","Machen Sie einen Vorschlag für einen Besuch (Tag und Uhrzeit).","Fragen Sie, was Sie mitbringen können."],
+   ptr:[{ar:"هنّيها.",uk:"Привітайте Надію.",tr:"Nadia'yı tebrik edin.",en:"Congratulate Nadia."},{ar:"اسألها كيفها وكيف البيبي.",uk:"Запитайте, як почуваються вона й дитина.",tr:"Onun ve bebeğin nasıl olduğunu sorun.",en:"Ask how she and the baby are."},{ar:"اقترح يوم وساعة للزيارة.",uk:"Запропонуйте день і час візиту.",tr:"Ziyaret için gün ve saat önerin.",en:"Suggest a day and time to visit."},{ar:"اسألها شو بتقدر تجيب معك.",uk:"Запитайте, що можна принести.",tr:"Ne getirebileceğinizi sorun.",en:"Ask what you can bring."}]}
  ]
 }
+
 ];
 
 </script>
@@ -1926,7 +2196,7 @@ function fillList(){
 
 // ───── SATZBAU
 function szStart(){
-  SZ.list=SZ.topic==="review"?shuf(rvSatz()):shuf(SB.filter(s=>SZ.topic==="all"||s.g===SZ.topic));SZ.idx=0;SZ.right=0;szLoad();
+  SZ.list=SZ.topic==="review"?shuf(rvSatz()):shuf(SB.filter(s=>SZ.topic==="all"?!REC[s.g]:s.g===SZ.topic));SZ.idx=0;SZ.right=0;szLoad();
 }
 function szLoad(){
   SZ.placed=[];SZ.answered=false;SZ.tries=0;SZ.fb=null;
@@ -1940,7 +2210,7 @@ function vSatz(){
   const nrv=rvSatz().length;
   const topics=[...(nrv||SZ.topic==="review"?["review"]:[]),"all",...GRAMMAR.map(g=>g.id).filter(id=>SB.some(s=>s.g===id))];
   let h=`<h2>${esc(t("sec_sentences"))}</h2>
-  <div class="chips">${topics.map(id=>`<button class="chip${id==="review"?" rvchip":""}" data-act="szTopic" data-k="${id}" aria-pressed="${SZ.topic===id}">${id==="all"?esc(t("all")):id==="review"?`↻ ${esc(t("rv_chip"))}<span class="n">${nrv}</span>`:`<span class="de">${esc(GI[id].de)}</span>`}</button>`).join("")}</div>`;
+  <div class="chips">${topics.map(id=>`<button class="chip${id==="review"?" rvchip":""}" data-act="szTopic" data-k="${id}" aria-pressed="${SZ.topic===id}">${id==="all"?esc(t("all")):id==="review"?`↻ ${esc(t("rv_chip"))}<span class="n">${nrv}</span>`:`<span class="de">${esc(GI[id].de)}</span>${REC[id]?" 👁":""}`}</button>`).join("")}</div>`;
   if(SZ.topic==="review"&&!SZ.list.length)return h+`<div class="done panel"><p>${esc(t("rv_empty"))}</p></div>`;
   if(SZ.idx>=SZ.list.length){
     return h+`<div class="done panel"><p style="font-size:1.15rem">${esc(t("doneSet"))}</p><p class="muted">${esc(t("firstTry",{a:SZ.right,b:SZ.list.length}))}</p><button class="btn pri" data-act="szRestart">${esc(t("restart"))}</button></div>`;
@@ -1951,7 +2221,7 @@ function vSatz(){
   h+=`<div class="panel prompt">
       <div class="meta"><span class="de">${esc(GI[s.g].de)}</span><span style="font-variant-numeric:tabular-nums">${SZ.idx+1} / ${SZ.list.length}</span></div>
       <p class="q">${esc(tr(s.tr))}</p></div>
-    <div class="rail${railCls}" dir="ltr" aria-label="${esc(t("tapWords"))}">${placed.length?placed.map(o=>`<button class="tile${o.w===","?" p":""}" data-act="szUn" data-i="${o.i}">${esc(o.w)}</button>`).join(""):`<span class="ph">${esc(t("tapWords"))}</span>`}</div>
+    <div class="rail${railCls}" dir="ltr" aria-label="${esc(t("tapWords"))}">${placed.length?placed.map((o,k)=>`<button class="tile${o.w===","?" p":""}${SZ.fb&&SZ.fb.kind==="bad"&&SZ.marks?(SZ.marks[k]?" mk-ok":" mk-bad"):""}" data-act="szUn" data-i="${o.i}">${esc(o.w)}</button>`).join(""):`<span class="ph">${esc(t("tapWords"))}</span>`}</div>
     <div class="tray" dir="ltr">${SZ.tiles.map(o=>`<button class="tile${o.w===","?" p":""}${SZ.placed.includes(o.i)?" used":""}" data-act="szPut" data-i="${o.i}"${SZ.placed.includes(o.i)?' tabindex="-1" aria-hidden="true"':""}>${esc(o.w)}</button>`).join("")}</div>`;
   if(SZ.fb)h+=SZ.fb.html;
   h+=`<div class="trio">
@@ -1961,34 +2231,108 @@ function vSatz(){
     </div>`;
   return h;
 }
+// ───── SATZBAU diagnosis: compares the learner's tiles with the closest correct answer and names the real mistake.
+const DG_W=new Set("was wer wen wem wessen wie wo wann warum woher wohin welche welcher welches welchen worauf wofür womit worüber wozu".split(" "));
+const DG_SUB=new Set("weil dass obwohl ob wenn als sodass damit bevor nachdem während falls seit seitdem bis".split(" "));
+const DG_REL=new Set("der die das den dem denen dessen deren".split(" "));
+const DG_PREP=new Set("mit von zu bei für auf an in über aus".split(" "));
+const DG_ADV=new Set("deshalb deswegen darum trotzdem dann daher".split(" "));
+const DG_CONN=new Set([...DG_SUB,...DG_ADV,"denn","so","um"]);
+const DG_PAIR={"denn|weil":"cn_weil_denn","obwohl|trotzdem":"cn_obwohl_trotzdem","deshalb|weil":"cn_deshalb_weil","denn|deshalb":"cn_denn_deshalb",
+  "als|wenn":"cn_als_wenn","dass|ob":"cn_dass_ob","dass|sodass":"cn_dass_sodass","so|sodass":"cn_dass_sodass","damit|um":"cn_damit_um"};
+const lc=w=>w.toLowerCase();
+function lev(a,b){a=lc(a);b=lc(b);const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const q=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=q}}return d[b.length]}
+function lcsLen(a,b){const m=Array(b.length+1).fill(0);for(let i=0;i<a.length;i++){let p=0;for(let j=1;j<=b.length;j++){const q=m[j];m[j]=lc(a[i])===lc(b[j-1])?p+1:Math.max(m[j],m[j-1]);p=q}}return m[b.length]}
+function bagMinus(a,b){const r=[...a];b.forEach(w=>{const i=r.findIndex(x=>lc(x)===lc(w));if(i>=0)r.splice(i,1)});return r}
+const clauses=ts=>{const r=[[]];ts.forEach(w=>w===","?r.push([]):r[r.length-1].push(w));return r};
+function clauseKind(c,i){const f=lc(c[0]||""),f2=lc(c[1]||"");
+  if(DG_SUB.has(f))return "sub";if(i>0&&(DG_REL.has(f)||DG_W.has(f)||(DG_PREP.has(f)&&DG_REL.has(f2))))return "sub";
+  if(DG_ADV.has(f))return "adv";if(f==="denn")return "denn";return "main"}
+function szDiag(s,mine){
+  const vars=[s.a,...s.alt].map(a=>a.split(" "));
+  const best=vars.map(v=>[v,bagMinus(mine,v).length,lcsLen(mine,v)]).sort((x,y)=>x[1]-y[1]||y[2]-x[2])[0][0];
+  const X=new Set(s.x.map(lc)),inBest=new Set(best.map(lc)),msgs=[],line=(k,v)=>msgs.push(md(t(k,v)));
+  // 1. wrong words (the trap tiles)
+  let missing=bagMinus(best,mine);const fixed=[...mine];
+  mine.forEach((w,i)=>{
+    if(!X.has(lc(w))||inBest.has(lc(w)))return;
+    let y=null;
+    const conn=missing.find(m=>DG_CONN.has(lc(m))&&DG_CONN.has(lc(w)));
+    if(conn)y=conn;else if(missing.length){const c=missing.map(m=>[m,1-lev(w,m)/Math.max(w.length,m.length)]).sort((a,b)=>b[1]-a[1])[0];if(c[1]>=.34||missing.length===1)y=c[0]}
+    if(y){missing=bagMinus(missing,[y]);fixed[i]=y;const pk=[lc(w),lc(y)].sort().join("|");
+      line("dg_form",{x:w,y});if(DG_PAIR[pk])line(DG_PAIR[pk])}
+    else line("dg_wrong",{x:w});
+  });
+  const extra=bagMinus(fixed,best);
+  if(missing.length)line("dg_missing",{n:missing.length});
+  else if(extra.length)line("dg_extra");
+  // 2. question word order
+  if(s.p==="?"&&fixed.length){
+    const yesno=!DG_W.has(lc(best[0]));
+    if(lc(fixed[0])!==lc(best[0]))line(yesno?"dg_yesno":"dg_w");
+  }
+  // 3. clauses: words in the wrong part (meaning), then verb position per clause
+  const A=clauses(best),U=clauses(fixed);
+  if(!missing.length&&!extra.length&&A.length===U.length&&A.length>1){
+    let map=A.map((_,i)=>i);
+    if(A.length===2){
+      const anchor=A.findIndex(c=>DG_CONN.has(lc(c[0]||"")));
+      const ua=anchor<0?-1:U.findIndex(c=>c.some(w=>lc(w)===lc(A[anchor][0])));
+      if(anchor>=0&&ua>=0&&ua!==anchor)map=[1,0];
+    }
+    const shared=new Set(A.map(c=>new Set(c.map(lc))).reduce((x,y)=>[...x].filter(w=>y.has(w))));
+    const wrongPart=[];U.forEach((c,i)=>bagMinus(c,A[map[i]]).forEach(w=>{if(!shared.has(lc(w))&&!wrongPart.includes(w))wrongPart.push(w)}));
+    if(wrongPart.length>4)line("dg_swapall");else if(wrongPart.length)line("dg_swap",{w:wrongPart.join(" · ")});
+    else if(map[0]===0)A.forEach((c,i)=>{
+      const u=U[i];if(u.map(lc).join(" ")===c.map(lc).join(" "))return;
+      const k=clauseKind(c,i);
+      if(k==="sub")line("dg_sub",{c:c[0]});
+      else if(k==="adv")line("dg_adv",{c:c[0]});
+      else if(k==="denn")line("dg_denn");
+      else if(i>0&&clauseKind(A[i-1],i-1)==="sub")line("dg_main");
+    });
+  }else if(!missing.length&&!extra.length&&A.length===1&&["perfekt","modal","passiv","konjunktiv"].includes(s.g)){
+    const last=best[best.length-1];
+    if(lc(fixed[fixed.length-1])!==lc(last)&&!(s.p==="?"&&msgs.length)&&best.length>2&&/^[a-zäöü]/.test(last)&&last!==best[1])line("dg_end",{w:last});
+  }
+  if(!msgs.length)line("dg_order");
+  const marks=mine.map((w,i)=>best[i]!=null&&lc(best[i])===lc(w));
+  return {msgs,marks};
+}
+const szRuleTip=s=>(s.p==="?"&&!DG_W.has(lc(s.a.split(" ")[0])))?t("dg_yesno"):tr(GI[s.g].tip);
 function szCheck(){
   const s=SZ.list[SZ.idx];if(!SZ.placed.length)return;
-  const mine=SZ.placed.map(i=>SZ.tiles.find(x=>x.i===i).w).join(" ");
+  const mineT=SZ.placed.map(i=>SZ.tiles.find(x=>x.i===i).w),mine=mineT.join(" ");
   const ok=[s.a,...s.alt].some(a=>norm(a)===norm(mine));
   SZ.tries++;
-  const tip=`<p>${md(tr(GI[s.g].tip))}</p>`;
+  const tip=`<p>${md(szRuleTip(s))}</p>`;
+  const dg=ok?null:szDiag(s,mineT);
+  const dgHtml=dg?`<ul class="dg">${dg.msgs.map(m=>`<li>${m}</li>`).join("")}</ul>`:"";
+  SZ.marks=dg?dg.marks:null;
   if(ok){
     SZ.answered=true;if(SZ.tries===1){SZ.right++;rvRight("s|"+s.id)}else rvWrong("s|"+s.id);S.satz[s.id]=1;save();
     logAnswer({section:"Satzbau",topic:GI[s.g].de,q:tr(s.tr),a:pretty(mine,s.p),ok:true,right:pretty(s.a,s.p),tries:SZ.tries});
     const full=pretty(mine,s.p);
     SZ.fb={kind:"ok",html:`<div class="fb ok"><span class="t">${esc(t("correct"))}</span><div class="line"><span class="de">${esc(full)}</span>${sayBtn(full)}</div>${tip}</div>`};
   }else if(SZ.tries<2){
-    SZ.fb={kind:"bad",html:`<div class="fb bad"><span class="t">${esc(t("tryAgain"))}</span>${tip}</div>`};
+    SZ.fb={kind:"bad",html:`<div class="fb bad"><span class="t">${esc(t("tryAgain"))}</span>${dgHtml}</div>`};
   }else{
     SZ.answered=true;const full=pretty(s.a,s.p);rvWrong("s|"+s.id);
     logAnswer({section:"Satzbau",topic:GI[s.g].de,q:tr(s.tr),a:pretty(mine,s.p),ok:false,right:full,tries:SZ.tries});
     SZ.list.push(s);
-    SZ.fb={kind:"bad",final:true,html:`<div class="fb bad"><span class="t">${esc(t("answerIs"))}</span><div class="line"><span class="de">${esc(full)}</span>${sayBtn(full)}</div>${tip}</div>`};
+    SZ.fb={kind:"bad",final:true,html:`<div class="fb bad"><span class="t">${esc(t("answerIs"))}</span><div class="line"><span class="de">${esc(full)}</span>${sayBtn(full)}</div><p class="t" style="margin-top:4px">${esc(t("dg_title"))}</p>${dgHtml}</div>`};
   }
   render();
 }
 
 // ───── GRAMMAR
+// Topics B1 learners must understand but not produce (feedback from the course teacher).
+const REC={praeteritum:"rec_pret",passiv:"rec_pass"};
 function vGrammar(){
   if(G.open==="verbs")return vVerbs();
   if(G.open&&GI[G.open])return vGDetail(GI[G.open]);
   return `<h2>${esc(t("sec_grammar"))}</h2>
-  <div class="glist">${GRAMMAR.map((g,i)=>`<button class="gitem" data-act="openG" data-g="${g.id}"><span class="num">${i+1}</span><span class="txt"><b>${esc(g.de)}</b><small>${esc(tr(g.n))}</small></span></button>`).join("")}
+  <div class="glist">${GRAMMAR.map((g,i)=>`<button class="gitem" data-act="openG" data-g="${g.id}"><span class="num">${i+1}</span><span class="txt"><b>${esc(g.de)} ${REC[g.id]?`<span class="recb">${esc(t("rec_badge"))}</span>`:""}</b><small>${esc(tr(g.n))}</small></span></button>`).join("")}
   <button class="gitem" data-act="openG" data-g="verbs"><span class="num">≡</span><span class="txt"><b>Verbtabelle</b><small>${esc(t("verbTable"))}</small></span></button></div>`;
 }
 function tableHTML(tb){
@@ -1999,6 +2343,7 @@ function vGDetail(g){
   const hasQ=QUIZ.some(q=>q[0]===g.id),hasS=SB.some(s=>s.g===g.id);
   return `<button class="back" data-act="closeG">${BACK_IC}${esc(t("back"))}</button>
   <div><p class="eyebrow de">${esc(g.de)}</p><h2>${esc(tr(g.n))}</h2></div>
+  ${REC[g.id]?`<section class="sheet tip recnote"><p class="eyebrow">👁 ${esc(t("rec_badge"))}</p><p>${md(t(REC[g.id]))}</p></section>`:""}
   <section class="panel"><h3 style="margin-bottom:10px">${esc(t("rules"))}</h3><ul class="rules">${(g.rules[L()]||g.rules.en).map(r=>`<li>${md(r)}</li>`).join("")}</ul></section>
   ${(g.tables||[]).map(tableHTML).join("")}
   <section class="panel"><h3 style="margin-bottom:10px">${esc(t("examples"))}</h3><div class="exs">${g.ex.map(([de,o])=>`<div class="ex"><div class="txt"><span class="de block">${esc(de)}</span><small>${esc(tr(o))}</small></div>${sayBtn(de)}</div>`).join("")}</div></section>
@@ -2046,7 +2391,7 @@ function qPartItem(v){
 }
 function qStart(mode,topic){
   Q.mode=mode;Q.topic=topic||null;Q.idx=0;Q.picked=null;Q.score=0;Q.wrong=[];Q.done=false;Q.running=true;
-  if(mode==="mixed")Q.items=pick(QUIZ,10).map(qGrammarItem);
+  if(mode==="mixed")Q.items=pick(QUIZ.filter(q=>!REC[q[0]]),10).map(qGrammarItem);
   else if(mode==="topic")Q.items=shuf(QUIZ.filter(q=>q[0]===topic)).map(qGrammarItem);
   else if(mode==="articles")Q.items=pick(NOUNS,10).map(qArticleItem);
   else if(mode==="review")Q.items=rvQuizItems();
@@ -2061,8 +2406,8 @@ function vQuiz(){
     const nrq=rvQ();
     return `<h2>${esc(t("sec_quiz"))}</h2>
     <p class="eyebrow" style="margin-top:2px">${esc(t("ex_title"))}</p>
-    <div class="modes">${EXAMS.map(ex=>{const n=examMax(ex),run=S.exam&&S.exam.id===ex.id,b=S.examBest[ex.id];
-      return `<button class="mode exmode" data-act="exStart" data-id="${ex.id}"><span class="ic de">B1</span><span class="txt"><b class="de">${esc(ex.title)}</b><small>${esc(t("ex_minutes",{n:ex.minutes}))} · ${esc(t("ex_points",{n}))}${b!=null?` · ${esc(t("ex_best"))} ${b}%`:""}</small></span><span class="badge">${esc(run?t("ex_resume"):t("ex_start"))}</span></button>`}).join("")}</div>
+    <div class="modes">${[...EXAMS].sort((a,b)=>(b.level==="B1")-(a.level==="B1")).map(ex=>{const n=examMax(ex),run=S.exam&&S.exam.id===ex.id,b=S.examBest[ex.id];
+      return `<button class="mode exmode" data-act="exStart" data-id="${ex.id}"><span class="ic de">${ex.level==="B1"?"B1":"A2+"}</span><span class="txt"><b class="de">${esc(ex.title)}</b><small>${esc(t("ex_minutes",{n:ex.minutes}))} · ${esc(t("ex_points",{n}))}${b!=null?` · ${esc(t("ex_best"))} ${b}%`:""}</small></span><span class="badge">${esc(run?t("ex_resume"):t("ex_start"))}</span></button>`}).join("")}</div>
     ${nrq?`<button class="mode" data-act="qStart" data-m="review"><span class="ic">↻</span><span class="txt"><b>${esc(t("rv_mode"))}</b><small>${nrq}</small></span></button>`:""}
     <p class="eyebrow" style="margin-top:6px">${esc(t("q_choose"))}</p>
     <div class="modes">
@@ -2071,7 +2416,7 @@ function vQuiz(){
       <button class="mode" data-act="qStart" data-m="partizip"><span class="ic de">ge…</span><span class="txt"><b>${esc(t("q_partizip"))}</b><small>10 · ${VERBS.length}${best("partizip")}</small></span></button>
     </div>
     <p class="eyebrow" style="margin-top:6px">${esc(t("q_topic"))}</p>
-    <div class="glist">${topics.map(g=>`<button class="gitem" data-act="qStart" data-m="topic" data-g="${g.id}"><span class="txt"><b>${esc(g.de)}</b><small>${esc(tr(g.n))} · ${QUIZ.filter(q=>q[0]===g.id).length}</small></span></button>`).join("")}</div>`;
+    <div class="glist">${topics.map(g=>`<button class="gitem" data-act="qStart" data-m="topic" data-g="${g.id}"><span class="txt"><b>${esc(g.de)} ${REC[g.id]?`<span class="recb">${esc(t("rec_badge"))}</span>`:""}</b><small>${esc(tr(g.n))} · ${QUIZ.filter(q=>q[0]===g.id).length}</small></span></button>`).join("")}</div>`;
   }
   if(Q.done){
     const n=Q.items.length;
@@ -2128,11 +2473,12 @@ function vExamPart(p,pi){
   }
   if(p.type==="listen")return `${canSpeak?"":`<p class="fb bad">${esc(t("ex_noaudio"))}</p>`}<ol class="xitems">${p.items.map((it,i)=>{const pl=S.exam.plays[k(i)]||0,show=!canSpeak||EXV.tr[k(i)];
     return `<li><div class="xrow">${canSpeak?`<button class="btn xplay" data-act="exPlay" data-k="${k(i)}" data-i="${i}" data-p="${pi}"${pl>=2?" disabled":""}>▶ ${esc(t("listen"))}</button><small class="muted">${esc(t("ex_plays",{n:pl}))}</small>`:""}${!canSpeak||pl<2?"":`<button class="linkish" data-act="exTr" data-k="${k(i)}">${esc(t("ex_transcript"))}</button>`}</div>
-    ${show?`<p class="de xtr">${esc(it[0])}</p>`:""}<p class="de"><b>${esc(it[1])}</b></p><div class="xcol">${sshuf(it[2],S.exam.id+pi+i).map(o=>opt(i,o,o)).join("")}</div></li>`}).join("")}</ol>`;
+    ${show?`<p class="de xtr">${Array.isArray(it[0])?it[0].map(([sp,x])=>`<b>${esc(sp)}:</b> ${esc(x)}`).join("<br>"):esc(it[0])}</p>`:""}<p class="de"><b>${esc(it[1])}</b></p><div class="xcol">${sshuf(it[2],S.exam.id+pi+i).map(o=>opt(i,o,o)).join("")}</div></li>`}).join("")}</ol>`;
   if(p.type==="write"){
     const wc=(S.exam.write.trim().match(/\S+/g)||[]).length;
-    return `<article class="xtext"><p class="de">${esc(p.task)}</p></article>
-    <p class="eyebrow">${esc(t("ex_check"))}</p><ul class="points">${p.points.map(x=>`<li class="de">${esc(x)}</li>`).join("")}</ul>
+    return `<article class="xtext"><p class="de">${esc(p.task)}</p>${p.tr?`<p class="muted xtask-tr" dir="auto">${esc(tr(p.tr))}</p>`:""}</article>
+    <p class="eyebrow">${esc(t("ex_check"))}</p><ul class="points">${p.points.map((x,i)=>`<li><span class="de">${esc(x)}</span>${p.ptr&&p.ptr[i]?` <small class="muted">· ${esc(tr(p.ptr[i]))}</small>`:""}</li>`).join("")}</ul>
+    ${p.reg?`<section class="sheet tip"><p class="eyebrow">✉ ${esc(t("ex_form"))}</p><p>${md(t(p.reg==="du"?"ex_reg_du":"ex_reg_sie"))}</p></section>`:""}
     <textarea id="exWrite" class="xwrite" lang="de" dir="ltr" spellcheck="false" placeholder="${esc(t("ex_writehere"))}">${esc(S.exam.write)}</textarea>
     <p class="muted" style="font-size:.85rem"><span id="exWc">${esc(t("ex_words",{n:wc}))}</span> · ${esc(t("ex_min",{n:p.min}))}</p>`;
   }
@@ -2146,7 +2492,7 @@ function vExam(){
       <div class="xtime"><small>${esc(t("ex_time"))}</small><b id="exTime">${mmss(exLeft())}</b></div>
     </div>
     <div class="xsteps">${ex.parts.map((q,i)=>`<button class="xstep" data-act="exGo" data-i="${i}" aria-current="${i===pi}"><span class="de">${esc(q.title)}</span></button>`).join("")}</div>
-    <section class="sheet xinst"><p class="de"><b>${esc(EXAM_DE[p.type])}</b></p><p class="muted">${esc(t("in_"+p.type))}</p></section>
+    <section class="sheet xinst"><p class="de"><b>${esc(EXAM_DE[p.inst||p.type])}</b></p><p class="muted">${esc(t("in_"+(p.inst||p.type)))}</p></section>
     ${vExamPart(p,pi)}
     ${EXV.confirm?`<div class="fb bad"><b>${esc(t("ex_submitQ"))}</b>${un?`<span>${esc(t("ex_unanswered",{n:un}))}</span>`:""}<div class="row"><button class="btn" data-act="exNo">${esc(t("no"))}</button><button class="btn pri" data-act="exDo">${esc(t("ex_submit"))}</button></div></div>`:""}
     <div class="xnav">
@@ -2365,7 +2711,7 @@ document.addEventListener("click",e=>{
     case "exStart":exStart(el.dataset.id);S.tab="quiz";save();render();window.scrollTo(0,0);break;
     case "exGo":{const i=+el.dataset.i,ex=S.exam&&exById(S.exam.id);if(!ex||i<0||i>=ex.parts.length)return;S.exam.part=i;EXV.confirm=false;save();render();window.scrollTo(0,0);break}
     case "exAns":{if(!S.exam)return;S.exam.ans[el.dataset.k]=el.dataset.v;save();const y=window.scrollY;render();window.scrollTo(0,y);break}
-    case "exPlay":{if(!S.exam)return;const k=el.dataset.k,ex=exById(S.exam.id),it=ex.parts[+el.dataset.p].items[+el.dataset.i];const n=S.exam.plays[k]||0;if(n>=2)return;S.exam.plays[k]=n+1;save();speak(it[0]);const y=window.scrollY;render();window.scrollTo(0,y);break}
+    case "exPlay":{if(!S.exam)return;const k=el.dataset.k,ex=exById(S.exam.id),it=ex.parts[+el.dataset.p].items[+el.dataset.i];const n=S.exam.plays[k]||0;if(n>=2)return;S.exam.plays[k]=n+1;save();Array.isArray(it[0])?speakLines(it[0]):speak(it[0]);const y=window.scrollY;render();window.scrollTo(0,y);break}
     case "exTr":{EXV.tr[el.dataset.k]=!EXV.tr[el.dataset.k];const y=window.scrollY;render();window.scrollTo(0,y);break}
     case "exAsk":EXV.confirm=true;render();break;
     case "exNo":EXV.confirm=false;render();break;
@@ -2395,7 +2741,7 @@ document.addEventListener("click",e=>{
     case "szPut":{if(SZ.answered)return;const i=+el.dataset.i;if(!SZ.placed.includes(i)){SZ.placed.push(i);if(SZ.fb&&SZ.fb.kind==="bad")SZ.fb=null;render()}break}
     case "szUn":{if(SZ.answered)return;const i=+el.dataset.i;SZ.placed=SZ.placed.filter(x=>x!==i);if(SZ.fb&&SZ.fb.kind==="bad")SZ.fb=null;render();break}
     case "szClear":if(!SZ.answered){SZ.placed=[];SZ.fb=null;render()}break;
-    case "szHint":{const s=SZ.list[SZ.idx];SZ.fb={kind:"hint",html:`<div class="fb bad"><span class="t">${esc(t("hint"))} 💡</span><p>${md(tr(GI[s.g].tip))}</p><p>${esc(t("firstWord"))} <b class="de">${esc(pretty(s.a.split(" ")[0],""))}</b></p></div>`};render();break}
+    case "szHint":{const s=SZ.list[SZ.idx];SZ.fb={kind:"hint",html:`<div class="fb bad"><span class="t">${esc(t("hint"))} 💡</span><p>${md(szRuleTip(s))}</p><p>${esc(t("firstWord"))} <b class="de">${esc(pretty(s.a.split(" ")[0],""))}</b></p></div>`};render();break}
     case "szCheck":szCheck();break;
     case "szNext":SZ.idx++;szLoad();render();break;
     // grammar

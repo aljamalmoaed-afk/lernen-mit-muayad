@@ -107,6 +107,11 @@ ins{color:var(--ok);background:var(--ok-bg);text-decoration:none;border-radius:3
 .toast{background:var(--ok-bg);color:var(--ok);border-radius:var(--r);padding:10px 14px;font-weight:600}
 .grid2>*,.kpis>*{min-width:0}
 @media (max-width:820px){.grid2{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+.rub{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:10px}
+.rubrow{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.rubrow>span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rubrow small{font-size:.78rem;line-height:1.4}
+.rubrow select{max-width:110px;flex:none}
 </style>
 </head>
 <body>
@@ -120,6 +125,12 @@ ins{color:var(--ok);background:var(--ok-bg);text-decoration:none;border-radius:3
 <main class="wrap" id="app"></main>
 
 <script>
+// Scoring guide modelled on B1 writing criteria: task (4 points × 2), form, language.
+const RUBRIC=[
+ {k:"A",de:"Aufgabe",ar:"تنفيذ المهمة",max:8,opts:[8,6,4,2,0],help:"نقطتين لكل نقطة من الـ4 نقاط المطلوبة (نقطة وحدة إذا ناقصة)."},
+ {k:"F",de:"Form & Aufbau",ar:"الشكل والترتيب",max:4,opts:[4,3,2,1,0],help:"التحية، الختام، du/Sie صح، وربط الجمل (weil، deshalb، aber…). نقطة لكل وحدة."},
+ {k:"S",de:"Sprache",ar:"اللغة",max:8,opts:[8,6,4,2,0],help:"8 تقريباً بلا أغلاط · 6 شوية أغلاط والنص مفهوم · 4 أغلاط كتير بس مفهوم · 2 صعب ينفهم · 0 ما بينفهم."}];
+
 (function(){
 "use strict";
 const ENDPOINT="https://script.google.com/macros/s/AKfycbzavcsPgjGk1ifesUSixDfenonfHv-AdPO5aVdepfc_7V4eQfZs4mjw2NlGxVlEy3tCmw/exec";
@@ -253,8 +264,13 @@ function vCorr(r){
         <h3>النص المصحّح</h3><p class="muted" style="font-size:.85rem">عدّل نص الطالب مباشرة هون. الطالب رح يشوف الفرق: الغلط بالأحمر والتصحيح بالأخضر.</p>
         <textarea id="cText" class="cta" dir="ltr" lang="de" spellcheck="true">${esc(r.a)}</textarea>
         <h3>ملاحظة للطالب</h3>
-        <textarea id="cNote" class="cta small" dir="auto" placeholder="مثلاً: شغل منيح! انتبه لترتيب الفعل بعد weil.">${esc(f.comment||"")}</textarea>
-        <label class="row"><b>العلامة</b><select id="cPts" class="search" style="max-width:120px" dir="ltr"><option value="">—</option>${Array.from({length:21},(_,i)=>20-i).map(i=>`<option${String(f.points)===String(i)?" selected":""}>${i}</option>`).join("")}</select><span class="muted">/ 20</span></label>
+        <p class="muted" style="font-size:.85rem">اكتب كل غلط مع الصح ومع السبب، لحتى الطالب يعرف كيف يصلّح. كبسة «+ غلط» بتزيد سطر جاهز.</p>
+        <textarea id="cNote" class="cta small" dir="auto" placeholder="✗ ich habe gegangen → ✓ ich bin gegangen (gehen = Perfekt mit sein)">${esc((f.comment||"").replace(/^📊[^\n]*\n\n/,""))}</textarea>
+        <div class="row"><button class="btn" type="button" id="cAddErr">+ غلط</button><button class="btn" type="button" id="cAddGood">+ شي منيح</button></div>
+        <section class="rub"><h3>العلامة حسب معايير الامتحان</h3>
+          ${RUBRIC.map(c=>`<label class="rubrow"><span><span><b>${c.ar}</b> · <bdi dir="ltr" class="muted">${c.de}</bdi></span><small class="muted">${c.help}</small></span><select class="search rubsel" data-k="${c.k}" dir="ltr"><option value="">—</option>${c.opts.map(o=>`<option value="${o}">${o} / ${c.max}</option>`).join("")}</select></label>`).join("")}
+        </section>
+        <label class="row"><b>المجموع</b><select id="cPts" class="search" style="max-width:120px" dir="ltr"><option value="">—</option>${Array.from({length:21},(_,i)=>20-i).map(i=>`<option${String(f.points)===String(i)?" selected":""}>${i}</option>`).join("")}</select><span class="muted">/ 20 · النجاح من 12</span></label>
         ${STATE.cErr?`<p class="err">${esc(STATE.cErr)}</p>`:""}
         <button class="btn pri" id="cSend" data-wid="${esc(widOf(r))}">ابعت التصحيح للطالب ✉</button>
       </section>
@@ -328,6 +344,7 @@ document.addEventListener("click",e=>{
   const so=t.closest("[data-sort]");if(so){STATE.sort=so.dataset.sort;render();return}
   const co=t.closest("[data-corr]");if(co){STATE.back=STATE.sel;STATE.corr=co.dataset.corr;STATE.cErr="";render();window.scrollTo(0,0);return}
   if(t.closest("#cSend")){sendCorr(t.closest("#cSend").dataset.wid);return}
+  if(t.closest("#cAddErr")||t.closest("#cAddGood")){const n=$("cNote"),line=t.closest("#cAddErr")?"✗  → ✓  ()":"👍 ";n.value=(n.value.trim()?n.value.replace(/\s+$/,"")+"\n":"")+line;n.focus();const pos=t.closest("#cAddErr")?n.value.length-" → ✓  ()".length:n.value.length;n.setSelectionRange(pos,pos);return}
   const st=t.closest("[data-stu]");if(st){STATE.sel=st.dataset.stu;STATE.topicFilter="";render();window.scrollTo(0,0);return}
   if(t.closest("[data-back]")){if(STATE.corr){STATE.corr=null}else STATE.sel=null;render();window.scrollTo(0,0);return}
   if(t.closest("#retry")||t.closest("#refresh")){load();return}
@@ -335,7 +352,9 @@ document.addEventListener("click",e=>{
 });
 function sendCorr(wid){
   const r=ROWS.find(x=>isWriting(x)&&widOf(x)===wid);if(!r)return;
-  const corrected=$("cText").value.trim(),comment=$("cNote").value.trim(),points=$("cPts").value;
+  const corrected=$("cText").value.trim(),points=$("cPts").value;
+  const rub=[...document.querySelectorAll(".rubsel")].filter(x=>x.value!=="").map(x=>{const c=RUBRIC.find(c=>c.k===x.dataset.k);return c.de+" "+x.value+"/"+c.max});
+  const comment=(rub.length===3?"📊 "+rub.join(" · ")+"\n\n":"")+$("cNote").value.trim();
   if(!corrected){STATE.cErr="النص المصحّح فاضي.";render();return}
   const btn=$("cSend");btn.disabled=true;btn.textContent="عم يبعت…";
   fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"feedback",key:KEY,wid,name:r.name,dev:r.dev,topic:r.topic,original:r.a,corrected,comment,points})})
@@ -347,6 +366,7 @@ document.addEventListener("input",e=>{
 document.addEventListener("change",e=>{if(e.target.id==="tf"){STATE.topicFilter=e.target.value;render()}});
 render();if(KEY)load();
 })();
+document.addEventListener("change",e=>{if(!e.target.classList||!e.target.classList.contains("rubsel"))return;const v=[...document.querySelectorAll(".rubsel")].map(x=>x.value);if(v.every(x=>x!==""))document.getElementById("cPts").value=String(v.reduce((a,b)=>a+ +b,0))});
 </script>
 </body>
 </html>
