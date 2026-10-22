@@ -139,6 +139,11 @@ html[dir="rtl"] .item .chev{transform:scaleX(-1)}
 .reset{display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:8px}
 .linkish{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:.86rem;padding:6px}
 
+.namef{display:flex;flex-direction:column;gap:12px}
+.namef .search{font-size:1.1rem;padding:13px 14px}
+.namef .search[aria-invalid="true"]{border-color:var(--bad)}
+.gate{grid-template-columns:1fr auto}
+
 /* flashcards */
 .card{perspective:1200px;width:100%;text-align:center;display:block;cursor:pointer;border-radius:var(--r)}
 .inner{position:relative;min-height:290px;transition:transform .45s;transform-style:preserve-3d}
@@ -287,6 +292,7 @@ window.LANGS = {
 };
 window.UI = {
  ar:{
+  name_title:"أهلاً وسهلاً 👋", name_hint:"اكتب اسمك لتبلّش", name_ph:"الاسم", name_go:"يلا نبلّش", name_note:"أجوبتك بالاختبارات وبناء الجمل بتنحفظ، وبيشوفها الأستاذ لحتى يساعدك.", hello_name:"أهلاً {n}! شو بدك تتمرّن اليوم؟", change_name:"مش إنت؟ غيّر الاسم",
   app:"تعلّم مع مؤيد", level:"ألماني B1", hello:"أهلا! شو بدك تتمرّن اليوم؟", lang:"اللغة",
   sec_words:"كلمات", sec_sentences:"بناء جمل", sec_grammar:"قواعد", sec_quiz:"اختبار", sec_writing:"كتابة",
   d_words:"بطاقات لـ {n} كلمة مع der/die/das والجمع", d_sentences:"رتّب الكلمات وابني الجملة ({n} جملة)", d_grammar:"{n} قاعدة مع شرح وأمثلة", d_quiz:"أسئلة سريعة، أداة التعريف، والـ Perfekt", d_writing:"إيميلات الامتحان وجمل جاهزة",
@@ -299,6 +305,7 @@ window.UI = {
   reset:"امسح كل التقدّم", resetQ:"أكيد بدك تمسح كل تقدّمك؟", yes:"إيه، امسح", no:"لا", noSpeech:"جهازك ما بيدعم الصوت"
  },
  uk:{
+  name_title:"Ласкаво просимо 👋", name_hint:"Введи своє ім'я, щоб почати", name_ph:"Ім'я", name_go:"Почати", name_note:"Твої відповіді в тестах і реченнях зберігаються, і викладач бачить їх, щоб тобі допомогти.", hello_name:"Привіт, {n}! Що тренуємо сьогодні?", change_name:"Не ти? Змінити ім'я",
   app:"Вчися з Муаядом", level:"Німецька B1", hello:"Привіт! Що тренуємо сьогодні?", lang:"Мова",
   sec_words:"Слова", sec_sentences:"Побудова речень", sec_grammar:"Граматика", sec_quiz:"Тест", sec_writing:"Письмо",
   d_words:"Картки: {n} слів з der/die/das та множиною", d_sentences:"Склади речення зі слів ({n} речень)", d_grammar:"{n} тем з поясненнями і прикладами", d_quiz:"Швидкі питання, артиклі та Perfekt", d_writing:"Листи для іспиту та готові фрази",
@@ -311,6 +318,7 @@ window.UI = {
   reset:"Скинути весь прогрес", resetQ:"Справді видалити весь прогрес?", yes:"Так, видалити", no:"Ні", noSpeech:"Пристрій не підтримує озвучення"
  },
  tr:{
+  name_title:"Hoş geldin 👋", name_hint:"Başlamak için adını yaz", name_ph:"Adın", name_go:"Başla", name_note:"Test ve cümle kurma cevapların kaydedilir; öğretmen sana yardım etmek için bunları görür.", hello_name:"Merhaba {n}! Bugün ne çalışalım?", change_name:"Sen değil misin? Adı değiştir",
   app:"Muayad ile Öğren", level:"Almanca B1", hello:"Merhaba! Bugün ne çalışalım?", lang:"Dil",
   sec_words:"Kelimeler", sec_sentences:"Cümle kurma", sec_grammar:"Dilbilgisi", sec_quiz:"Test", sec_writing:"Yazma",
   d_words:"der/die/das ve çoğul ile {n} kelimelik kartlar", d_sentences:"Kelimeleri sırala, cümleyi kur ({n} cümle)", d_grammar:"Açıklama ve örneklerle {n} konu", d_quiz:"Hızlı sorular, artikeller ve Perfekt", d_writing:"Sınav e-postaları ve hazır kalıplar",
@@ -323,6 +331,7 @@ window.UI = {
   reset:"Tüm ilerlemeyi sil", resetQ:"Tüm ilerlemeyi silmek istediğine emin misin?", yes:"Evet, sil", no:"Hayır", noSpeech:"Cihazın sesli okumayı desteklemiyor"
  },
  en:{
+  name_title:"Welcome 👋", name_hint:"Enter your name to start", name_ph:"Your name", name_go:"Let's start", name_note:"Your answers in quizzes and sentence building are saved, and your teacher can see them to help you.", hello_name:"Hi {n}! What shall we practise today?", change_name:"Not you? Change name",
   app:"Learn with Muayad", level:"German B1", hello:"Hi! What shall we practise today?", lang:"Language",
   sec_words:"Words", sec_sentences:"Sentence building", sec_grammar:"Grammar", sec_quiz:"Quiz", sec_writing:"Writing",
   d_words:"Flashcards for {n} words with der/die/das and plurals", d_sentences:"Put the words in order ({n} sentences)", d_grammar:"{n} topics with rules and examples", d_quiz:"Quick questions, articles and the Perfekt", d_writing:"Exam emails and ready-made phrases",
@@ -1401,6 +1410,25 @@ try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&typeof s==="obje
 if(!UI[S.lang])S.lang="ar";
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 
+// ───── answer log → teacher's Google Sheet
+const ENDPOINT="https://script.google.com/macros/s/AKfycbzavcsPgjGk1ifesUSixDfenonfHv-AdPO5aVdepfc_7V4eQfZs4mjw2NlGxVlEy3tCmw/exec";
+if(!S.dev){S.dev=Math.random().toString(36).slice(2,10);save()}
+let OUTQ=[];try{OUTQ=JSON.parse(localStorage.getItem(KEY+"-q")||"[]")||[]}catch(e){OUTQ=[]}
+const saveQ=()=>{try{localStorage.setItem(KEY+"-q",JSON.stringify(OUTQ.slice(-500)))}catch(e){}};
+let flushing=false;
+function flush(){
+  if(flushing||!OUTQ.length||!/^https:/.test(ENDPOINT))return;
+  flushing=true;const batch=OUTQ.slice(0,25);
+  fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({rows:batch})})
+    .then(()=>{OUTQ=OUTQ.slice(batch.length);saveQ();flushing=false;if(OUTQ.length)setTimeout(flush,800)})
+    .catch(()=>{flushing=false;setTimeout(flush,15000)});
+}
+function logAnswer(o){
+  if(!S.name)return;
+  OUTQ.push(Object.assign({t:new Date().toISOString(),name:S.name,dev:S.dev,lang:S.lang},o));saveQ();flush();
+}
+window.addEventListener("online",flush);
+
 // ───── helpers
 const $=id=>document.getElementById(id);
 const L=()=>S.lang;
@@ -1478,9 +1506,23 @@ function applyLang(){
 function renderNav(){
   $("nav").innerHTML=TABS.map(([k,n])=>`<button data-act="tab" data-tab="${k}"${S.tab===k?' aria-current="page"':""}>${svg(k)}<span>${n}</span></button>`).join("");
 }
+function vName(){
+  return `<section class="welcome gate">
+    <div><p class="eyebrow">${esc(t("level"))}</p><h1>${esc(t("name_title"))}</h1><p>${esc(t("name_hint"))}</p></div>
+    <img alt="" src="${LOGO}">
+  </section>
+  <form class="sheet namef" id="namef" novalidate>
+    <label for="nameIn" class="eyebrow">${esc(t("name_ph"))}</label>
+    <input id="nameIn" class="search" type="text" maxlength="40" autocomplete="name" placeholder="${esc(t("name_ph"))}" value="${esc(S.pendingName||"")}">
+    <button class="btn pri" type="submit">${esc(t("name_go"))}</button>
+    <p class="muted" style="font-size:.86rem">🔒 ${esc(t("name_note"))}</p>
+  </form>`;
+}
 function render(){
-  renderNav();
   const v=$("view");
+  document.querySelector(".nav").hidden=!S.name;
+  if(!S.name){$("nav").innerHTML="";v.innerHTML=`<div class="view">${vName()}</div>`;return}
+  renderNav();
   const f={start:vStart,words:vWords,satz:vSatz,grammar:vGrammar,quiz:vQuiz,writing:vWriting}[S.tab]||vStart;
   v.innerHTML=`<div class="view">${f()}</div>`;
   if(S.tab==="words"&&W.mode==="list")fillList();
@@ -1502,7 +1544,7 @@ function vStart(){
     ["writing","sec_writing",t("d_writing")]];
   return `
   <section class="welcome">
-    <div><p class="eyebrow">${esc(t("level"))}</p><h1>${esc(t("app"))}</h1><p>${esc(t("hello"))}</p></div>
+    <div><p class="eyebrow">${esc(t("level"))}</p><h1>${esc(t("app"))}</h1><p>${esc(t("hello_name",{n:S.name}))}</p></div>
     <img alt="" src="${LOGO}">
     <div class="gender"><span class="a-der">der</span><span class="a-die">die</span><span class="a-das">das</span></div>
   </section>
@@ -1524,7 +1566,7 @@ function vStart(){
   </article>
   <div class="reset">${confirmReset
     ?`<p>${esc(t("resetQ"))}</p><div class="row"><button class="btn" data-act="resetNo">${esc(t("no"))}</button><button class="btn again" data-act="resetYes">${esc(t("yes"))}</button></div>`
-    :`<button class="linkish" data-act="resetAsk">${esc(t("reset"))}</button>`}</div>`;
+    :`<button class="linkish" data-act="changeName">${esc(t("change_name"))}</button><button class="linkish" data-act="resetAsk">${esc(t("reset"))}</button>`}</div>`;
 }
 
 // ───── WORDS
@@ -1617,12 +1659,14 @@ function szCheck(){
   const tip=`<p>${md(tr(GI[s.g].tip))}</p>`;
   if(ok){
     SZ.answered=true;if(SZ.tries===1)SZ.right++;S.satz[s.id]=1;save();
+    logAnswer({section:"Satzbau",topic:GI[s.g].de,q:tr(s.tr),a:pretty(mine,s.p),ok:true,right:pretty(s.a,s.p),tries:SZ.tries});
     const full=pretty(mine,s.p);
     SZ.fb={kind:"ok",html:`<div class="fb ok"><span class="t">${esc(t("correct"))}</span><div class="line"><span class="de">${esc(full)}</span>${sayBtn(full)}</div>${tip}</div>`};
   }else if(SZ.tries<2){
     SZ.fb={kind:"bad",html:`<div class="fb bad"><span class="t">${esc(t("tryAgain"))}</span>${tip}</div>`};
   }else{
     SZ.answered=true;const full=pretty(s.a,s.p);
+    logAnswer({section:"Satzbau",topic:GI[s.g].de,q:tr(s.tr),a:pretty(mine,s.p),ok:false,right:full,tries:SZ.tries});
     SZ.list.push(s);
     SZ.fb={kind:"bad",final:true,html:`<div class="fb bad"><span class="t">${esc(t("answerIs"))}</span><div class="line"><span class="de">${esc(full)}</span>${sayBtn(full)}</div>${tip}</div>`};
   }
@@ -1664,13 +1708,13 @@ function vVerbs(){
 function qGrammarItem(r){
   const [g,sent,opts]=r;const correct=opts[0];
   const filled=sent.replace("___",correct);
-  return {g,prompt:`<p class="qtext">${esc(sent).replace("___",'<span class="blank">&nbsp;</span>')}</p>`,
+  return {g,q:sent,topic:GI[g].de,prompt:`<p class="qtext">${esc(sent).replace("___",'<span class="blank">&nbsp;</span>')}</p>`,
     after:`<p class="qtext">${esc(sent).replace("___",`<span class="blank f">${esc(correct)}</span>`)}</p>`,
     options:shuf(opts),correct,explain:`<p>${md(tr(GI[g].tip))}</p>`,say:filled,review:filled};
 }
 function qArticleItem(w){
   const m=/^(der|die|das)\s(.+)$/.exec(w.de);
-  return {art:true,prompt:`<p class="qtext center">${esc(m[2])}</p><p class="muted" style="text-align:center">${esc(tr(w.tr))}</p>`,
+  return {art:true,q:m[2]+" ("+tr(w.tr)+")",topic:"der/die/das",prompt:`<p class="qtext center">${esc(m[2])}</p><p class="muted" style="text-align:center">${esc(tr(w.tr))}</p>`,
     after:`<p class="qtext center">${deHTML(w.de,w.pl)}</p><p class="muted" style="text-align:center">${esc(tr(w.tr))}${w.pl?` · <span class="de">die ${esc(w.pl)}</span>`:""}</p>`,
     options:["der","die","das"],correct:m[1],explain:"",say:w.de,review:w.de};
 }
@@ -1686,7 +1730,7 @@ function qPartItem(v){
   const correct=aux+" "+v[2];
   let opts=[correct,other+" "+v[2],aux+" "+wrongPart(v)];
   opts=[...new Set(opts)];
-  return {prompt:`<p class="qtext">${esc(t("q_which"))} <b>${esc(v[0])}</b>?</p>`,
+  return {q:v[0],topic:"Partizip II",prompt:`<p class="qtext">${esc(t("q_which"))} <b>${esc(v[0])}</b>?</p>`,
     after:`<p class="qtext">${esc(v[0])} – ${esc(v[1])} – <span class="blank f">${esc(correct)}</span></p>`,
     options:shuf(opts),correct,explain:`<p>${md(tr(GI.perfekt.tip))}</p>`,say:`${v[0]}, ${v[1]}, ${correct}`,review:`${v[0]} – ${v[1]} – ${correct}`};
 }
@@ -1756,6 +1800,7 @@ document.addEventListener("click",e=>{
   if(a==="say"){e.stopPropagation();speak(el.dataset.say);return}
   switch(a){
     case "tab":confirmReset=false;if(el.dataset.tab==="grammar"&&S.tab==="grammar")G.open=null;if(el.dataset.tab==="writing"&&S.tab==="writing")WR.open=null;if(el.dataset.tab==="quiz"&&S.tab==="quiz"&&Q.done)Q.running=false;go(el.dataset.tab);break;
+    case "changeName":S.name="";save();render();window.scrollTo(0,0);break;
     case "resetAsk":confirmReset=true;render();break;
     case "resetNo":confirmReset=false;render();break;
     case "resetYes":S.known={};S.satz={};S.quizDone=0;S.quizBest={};save();confirmReset=false;W.queue=[];W.idx=0;render();break;
@@ -1786,8 +1831,8 @@ document.addEventListener("click",e=>{
     case "practiceS":SZ.topic=el.dataset.g;szStart();go("satz");break;
     // quiz
     case "qStart":qStart(el.dataset.m,el.dataset.g);if(S.tab!=="quiz")S.tab="quiz";save();render();window.scrollTo(0,0);break;
-    case "qPick":{if(Q.picked!=null)return;const it=Q.items[Q.idx];Q.picked=el.dataset.v;if(Q.picked===it.correct)Q.score++;else Q.wrong.push({review:it.review,picked:Q.picked});render();break}
-    case "qNext":Q.idx++;Q.picked=null;if(Q.idx>=Q.items.length){Q.done=true;S.quizDone=(S.quizDone||0)+1;const k=Q.mode==="topic"?"t:"+Q.topic:Q.mode;if(Q.items.length===10||Q.mode==="topic"){S.quizBest[k]=Math.max(S.quizBest[k]||0,Q.score)}save()}render();window.scrollTo(0,0);break;
+    case "qPick":{if(Q.picked!=null)return;const it=Q.items[Q.idx];Q.picked=el.dataset.v;logAnswer({section:"Quiz",topic:it.topic,q:it.q,a:Q.picked,ok:Q.picked===it.correct,right:it.correct,tries:1});if(Q.picked===it.correct)Q.score++;else Q.wrong.push({review:it.review,picked:Q.picked});render();break}
+    case "qNext":Q.idx++;Q.picked=null;if(Q.idx>=Q.items.length){Q.done=true;S.quizDone=(S.quizDone||0)+1;const k=Q.mode==="topic"?"t:"+Q.topic:Q.mode;if(Q.items.length===10||Q.mode==="topic"){S.quizBest[k]=Math.max(S.quizBest[k]||0,Q.score)}save();logAnswer({section:"Quiz-Ergebnis",topic:Q.mode==="topic"?GI[Q.topic].de:Q.mode,q:"",a:Q.score+" / "+Q.items.length,ok:""})}render();window.scrollTo(0,0);break;
     case "qRedo":qStart(Q.mode,Q.topic);render();break;
     case "qMenu":Q.running=false;render();break;
     // writing
@@ -1803,10 +1848,16 @@ document.addEventListener("click",e=>{
   }
 });
 document.addEventListener("keydown",e=>{const el=e.target;if(el&&el.id==="wcard"&&(e.key==="Enter"||e.key===" ")){e.preventDefault();el.classList.toggle("flip")}});
+document.addEventListener("submit",e=>{
+  if(e.target.id!=="namef")return;e.preventDefault();
+  const v=($("nameIn").value||"").replace(/\s+/g," ").trim().slice(0,40);
+  if(v.length<2){$("nameIn").focus();$("nameIn").setAttribute("aria-invalid","true");return}
+  S.name=v;S.tab="start";save();logAnswer({section:"Start",topic:"",q:"",a:"",ok:""});render();window.scrollTo(0,0);
+});
 document.addEventListener("input",e=>{if(e.target.id==="wsearch"){W.search=e.target.value;fillList()}});
 $("lang").addEventListener("change",e=>{S.lang=e.target.value;save();applyLang();render()});
 
-applyLang();render();
+applyLang();render();flush();
 })();
 </script>
 
